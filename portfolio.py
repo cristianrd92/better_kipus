@@ -16,6 +16,7 @@ import constants
 import building
 import utility
 import weather
+from datetime import datetime
 import benchmark
 
 
@@ -30,28 +31,85 @@ class Portfolio:
 
     def read_raw_data_from_xlsx(self, filename):
         # clean up the raw data and save it as a dataframe
-        self.df_meta = pd.read_excel(filename, sheet_name="Metadata", skiprows=[0, 1], usecols="A:I")
-        self.df_detail = pd.read_excel(filename, sheet_name="Utility", skiprows=[0, 1], usecols="A:G",
-                                       parse_dates=[1, 2], infer_datetime_format=True)
+        self.df_meta = pd.read_excel(filename, sheet_name="example", usecols="A:Z")
         # Change column names in the dataframe
-        self.df_meta.columns = ["building_ID", "building_name", "building_address", "building_area",
-                                "building_space_type_1st", "building_space_type_2nd", "building_cooling_fuel_type",
-                                "building_heating_fuel_type", "currency"]
-        self.df_detail.columns = ["building_ID", "bill_start_dates", "bill_end_dates", "energy_type",
-                                  "energy_unit", "energy_consumption", "energy_cost"]
+        self.df_meta['building_cooling_fuel_type'] = ''
+        self.df_meta['building_heating_fuel_type'] = ''
+        self.df_meta["currency"] = 'US Dollar' 
 
+        self.df_meta.columns = ['region_id','comuna','institution', "building_name", "building_address","building_ID" ,"building_area",
+                    "building_space_type_1st", "building_space_type_2nd", "service",'medidor','clasificacion',
+                    'm1','m2','m3','m4','m5','m6','m7','m8','m9','m10','m11','m12','latitud','longitud','building_cooling_fuel_type','building_heating_fuel_type','currency']
+
+        #self.df_detail.columns = ["building_ID", "bill_start_dates", "bill_end_dates", "energy_type",
+        #                          "energy_unit", "energy_consumption", "energy_cost"]
 
         # Drop rows where necessary values are missing
-        self.df_meta = self.df_meta[np.isfinite(self.df_meta['building_ID'])]
-        self.df_detail = self.df_detail[np.isfinite(self.df_detail['building_ID'])]
+        #self.df_meta = self.df_meta[np.isfinite(self.df_meta['building_ID'])]
+        #self.df_detail = self.df_detail[np.isfinite(self.df_detail['building_ID'])]
 
-    def get_utility_by_building_id_and_energy_type(self, building_ID, energy_type):
+    def get_utility_by_building_id_and_energy_type(self, building_ID, energy_type,anio):
         # energy_type: 1 ~ electricity; 2 ~ fossil fuel
-        df_temp = self.df_detail.loc[self.df_detail['building_ID'] == building_ID]
-        df_temp = df_temp[['bill_start_dates', 'bill_end_dates', 'energy_type',
-                           'energy_unit', 'energy_consumption', 'energy_cost']]
+        df_temp = self.df_meta.loc[self.df_meta['building_ID'] == building_ID]
+        
+        consumos = []
 
-        print(df_temp)
+        #Creamos los meses
+        ene_s = datetime.strptime('01/01/'+str(anio), '%d/%m/%Y').date()
+        feb_s = datetime.strptime('01/02/'+str(anio), '%d/%m/%Y').date()
+        mar_s = datetime.strptime('01/03/'+str(anio), '%d/%m/%Y').date()
+        abr_s = datetime.strptime('01/04/'+str(anio), '%d/%m/%Y').date()
+        may_s = datetime.strptime('01/05/'+str(anio), '%d/%m/%Y').date()
+        jun_s = datetime.strptime('01/06/'+str(anio), '%d/%m/%Y').date()
+        jul_s = datetime.strptime('01/07/'+str(anio), '%d/%m/%Y').date()
+        ago_s = datetime.strptime('01/08/'+str(anio), '%d/%m/%Y').date()
+        sep_s = datetime.strptime('01/09/'+str(anio), '%d/%m/%Y').date()
+        oct_s = datetime.strptime('01/10/'+str(anio), '%d/%m/%Y').date()
+        nov_s = datetime.strptime('01/11/'+str(anio), '%d/%m/%Y').date()
+        dic_s = datetime.strptime('01/12/'+str(anio), '%d/%m/%Y').date()
+
+        meses_start = [ene_s,feb_s,mar_s,abr_s,may_s,jun_s,jul_s,ago_s,sep_s,oct_s,nov_s,dic_s]
+
+        ene_e = datetime.strptime('31/01/'+str(anio), '%d/%m/%Y').date()
+        feb_e = datetime.strptime('28/02/'+str(anio), '%d/%m/%Y').date()
+        mar_e = datetime.strptime('31/03/'+str(anio), '%d/%m/%Y').date()
+        abr_e = datetime.strptime('30/04/'+str(anio), '%d/%m/%Y').date()
+        may_e = datetime.strptime('31/05/'+str(anio), '%d/%m/%Y').date()
+        jun_e = datetime.strptime('30/06/'+str(anio), '%d/%m/%Y').date()
+        jul_e = datetime.strptime('31/07/'+str(anio), '%d/%m/%Y').date()
+        ago_e = datetime.strptime('31/08/'+str(anio), '%d/%m/%Y').date()
+        sep_e = datetime.strptime('30/09/'+str(anio), '%d/%m/%Y').date()
+        oct_e = datetime.strptime('31/10/'+str(anio), '%d/%m/%Y').date()
+        nov_e = datetime.strptime('30/11/'+str(anio), '%d/%m/%Y').date()
+        dic_e = datetime.strptime('31/12/'+str(anio), '%d/%m/%Y').date()
+
+        meses_end = [ene_e,feb_e,mar_e,abr_e,may_e,jun_e,jul_e,ago_e,sep_e,oct_e,nov_e,dic_e]
+
+        consumos.append(round(df_temp.loc[0].m1))
+        consumos.append(round(df_temp.loc[0].m2))
+        consumos.append(round(df_temp.loc[0].m3))
+        consumos.append(round(df_temp.loc[0].m4))
+        consumos.append(round(df_temp.loc[0].m5))
+        consumos.append(round(df_temp.loc[0].m6))
+        consumos.append(round(df_temp.loc[0].m7))
+        consumos.append(round(df_temp.loc[0].m8))
+        consumos.append(round(df_temp.loc[0].m9))
+        consumos.append(round(df_temp.loc[0].m10))
+        consumos.append(round(df_temp.loc[0].m11))
+        consumos.append(round(df_temp.loc[0].m12))        
+
+        if energy_type==1:
+            tipo_energia = "Electricity - Grid Purchased"
+            unidad = 'kWh'
+        else:
+            tipo_energia = "Natural Gas"
+            unidad = 'Therms'
+
+        d = {'bill_start_dates': meses_start, 'bill_end_dates': meses_end,
+        'energy_type':tipo_energia,'energy_unit':unidad,'energy_consumption':consumos,'energy_cost':None}
+        
+        df_temp = pd.DataFrame(data=d)
+
         if (energy_type == 1):
             df_temp = df_temp.loc[df_temp['energy_type'] == 'Electricity - Grid Purchased']
             if df_temp.empty: return None

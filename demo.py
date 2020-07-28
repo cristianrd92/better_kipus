@@ -19,6 +19,7 @@ import os
 def run_single(
     bldg_id = 1, 
     saving_target = 2, 
+    anio = 3,
     space_type='Office',
     cached_weather=True, 
     write_fim=True, 
@@ -50,8 +51,8 @@ def run_single(
         # Initialize a building instance
         building_test = building.Building(building_id, *building_info, saving_target)
         # Get utility data from portfolio
-        df_raw_electricity = p.get_utility_by_building_id_and_energy_type(building_ID=building_id, energy_type=1)
-        df_raw_fossil_fuel = p.get_utility_by_building_id_and_energy_type(building_ID=building_id, energy_type=2)
+        df_raw_electricity = p.get_utility_by_building_id_and_energy_type(building_ID=building_id, energy_type=1,anio=anio)
+        df_raw_fossil_fuel = p.get_utility_by_building_id_and_energy_type(building_ID=building_id, energy_type=2,anio=anio)
         df_raw_utility_e = df_raw_electricity
         df_raw_utility_f = df_raw_fossil_fuel
         utility_test_e = utility.Utility('electricity', df_raw_utility_e)
