@@ -5,12 +5,59 @@ NOTICE.  This Software was developed under funding from the U.S. Department of E
 '''
 
 from demo import *
+import pandas as pd
+import openlocationcode
+import numpy as np
+import googlemaps
+
+gmaps = googlemaps.Client(key='AIzaSyBUEx8t5HyVP5YMjnUPu0rIyuhVmR6Hzy0')
+
+s_path = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
+data_path = s_path + '/Data/'
+df_first = pd.read_excel(data_path + 'portfolio.xlsx', sheet_name="Datos", skiprows=[0], usecols="A:X")
+
+#Cambiamos nombre a columnas
+df_first.columns = ["region_id",'comuna','institution', "building_name", "building_address","building_ID" ,"building_area",
+                    "building_space_type_1st", "building_space_type_2nd", "service",'medidor','clasificacion',
+                    'm1','m2','m3','m4','m5','m6','m7','m8','m9','m10','m11','m12']
+#Eliminamos toda fila con area no definida
+df_first = df_first[np.isfinite(df_first['building_area'])]
+#Creamos columnas nuevas latitud y longitud
+
+list_ubid=list()
+list_lat=list()
+list_lng=list()
+
+for i,d in df_first.iterrows():
+    #Comienza proceso de confeccion de direccion
+    x = d['building_address']
+    x = x.split(',')
+    f = x[1]
+    f = f.split('Nro. ')
+    n = f[-1]
+    x = x[0]+' '+n+','+x[-1]+', Chile'
+    #Finaliza confeccion direccion
+    geocode_result = gmaps.geocode(x)
+    lat = geocode_result[0]['geometry']['location']['lat']
+    lng = geocode_result[0]['geometry']['location']['lng']
+    ubid = openlocationcode.encode(lat,lng)
+    list_lat.append(lat)
+    list_lng.append(lng)
+    list_ubid.append(ubid)
+
+df_first['Latitude'] = list_lat
+df_first['Longitude']  = list_lng
+df_first['UBID'] = list_ubid
 
 
- df_first = pd.read_excel(filename, sheet_name="Metadata", skiprows=[0, 1], usecols="A:I")
 
+for x in range (0,len(df_first)):
+    print(df_first)
+    input()
 
+super
 
+input()
 # Notes:
     # Saving target: 1 ~ conservative, 2 ~ nominal, 3 ~ aggressive
     # Change the building id and saving target for the building you want to analyze
