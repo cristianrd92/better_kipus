@@ -5,6 +5,12 @@ NOTICE.  This Software was developed under funding from the U.S. Department of E
 '''
 
 from demo import *
+
+
+ df_first = pd.read_excel(filename, sheet_name="Metadata", skiprows=[0, 1], usecols="A:I")
+
+
+
 # Notes:
     # Saving target: 1 ~ conservative, 2 ~ nominal, 3 ~ aggressive
     # Change the building id and saving target for the building you want to analyze
