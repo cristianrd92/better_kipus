@@ -72,6 +72,7 @@ for x in range(12):
     suma = sum([fila[x] for fila  in estacionalidad_general])
     estacionalidad_meses.append(suma/len(estacionalidad_general))
 
+valores_q = list()
 #Algortimo para completar datos de meses faltantes
 for x in range (len(df_first)):
     b = np.array(df_first.iloc[x,12:24])
@@ -135,6 +136,26 @@ for x in range (len(df_first)):
     if (b[11]==0 or math.isnan(b[11])):
         b[11] = promedio*estacionalidad_meses[11]
     df_first.iloc[x,12:24]=b
+    #Algoritmo para eliminar valores muy alejados de q1 y q3
+    valores_q.append(sum(b)/df_first.iloc[x,6])
+
+q1 = np.percentile(valores_q,25)
+q3 = np.percentile(valores_q,75)
+iqr = q3-q1
+lower = q1-(1.5*iqr)
+higher = q3+(1.5*iqr)
+
+#Algoritmo para eliminar en base a Q1 y Q3
+indice =0
+for x in valores_q:
+    if x<lower or x>higher:
+        df_first = df_first.drop(indice)
+    indice++
+#print(q1,q3,iqr,lower,higher,valores_q)
+
+
+
+    
 
 
 
