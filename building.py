@@ -21,11 +21,13 @@ import copy
 
 
 class Building:
-    def __init__(self, bldg_id, bldg_name, bldg_address, bldg_type, bldg_area, currency='US Dollar', saving_target=2):
+    def __init__(self, bldg_id, bldg_name, bldg_address, bldg_type, bldg_area, latitude, longitude, currency='US Dollar', saving_target=2):
         self.bldg_id = bldg_id
         self.bldg_name = bldg_name
         self.bldg_address = bldg_address
         self.bldg_type = bldg_type
+        self.latitude = latitude
+        self.longitude = longitude
         self.bldg_area = round(bldg_area, 1)
         self.currency = currency
         self.geocode_address()
@@ -41,21 +43,21 @@ class Building:
     def geocode_address(self):
         # Note: google API might not be accessible in China
         # Change the geocoder to Baidu or other Chinese search engine for Chinese tool
-        try:
-            # Try different geocoders: Google -> ArcGIS -> Bing -> Baidu
-            self.geo_coder = geocoder.google(self.bldg_address)
-            if (self.geo_coder.latlng is None):
-                self.geo_coder = geocoder.arcgis(self.bldg_address)
-            if (self.geo_coder.latlng is None):
-                self.geo_coder = geocoder.bing(self.bldg_address)
-            if (self.geo_coder.latlng is None):
-                self.geo_coder = geocoder.baidu(self.bldg_address)
-        except:
-            raise ("Try another geocoder provider")
+        # try:
+        #     # Try different geocoders: Google -> ArcGIS -> Bing -> Baidu
+        #     self.geo_coder = geocoder.google(self.bldg_address)
+        #     if (self.geo_coder.latlng is None):
+        #         self.geo_coder = geocoder.arcgis(self.bldg_address)
+        #     if (self.geo_coder.latlng is None):
+        #         self.geo_coder = geocoder.bing(self.bldg_address)
+        #     if (self.geo_coder.latlng is None):
+        #         self.geo_coder = geocoder.baidu(self.bldg_address)
+        # except:
+        #     raise ("Try another geocoder provider")
 
-        self.coord = self.geo_coder.latlng
+        self.coord = [self.latitude,self.longitude]
         self.latitude, self.longitude = self.coord
-        self.geo_address = self.geo_coder.address
+        self.geo_address = self.bldg_address
 
     def add_utility(self, utility_e=None, utility_f=None):
         if (utility_e is not None):

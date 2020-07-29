@@ -48,7 +48,6 @@ def run_single(
     if(building_info == None):
         return False, None
     else:
-        # Initialize a building instance
         building_test = building.Building(building_id, *building_info, saving_target)
         # Get utility data from portfolio
         df_raw_electricity = p.get_utility_by_building_id_and_energy_type(building_ID=building_id, energy_type=1,anio=anio)
@@ -106,8 +105,8 @@ def run_single(
             report_building.generate_building_report_beta(report_path)
             return True, building_test
         else:
-            print("No meaningful change-point model was found for the current building.")
-            return False, None
+            print("No se encontró un modelo de punto de cambio significativo para el edificio actual.")
+            #return False, None
 
 
 def summary_html(report_path, start_id, end_id):

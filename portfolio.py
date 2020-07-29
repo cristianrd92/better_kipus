@@ -39,7 +39,7 @@ class Portfolio:
 
         self.df_meta.columns = ['region_id','comuna','institution', "building_name", "building_address","building_ID" ,"building_area",
                     "building_space_type_1st", "building_space_type_2nd", "service",'medidor','clasificacion',
-                    'm1','m2','m3','m4','m5','m6','m7','m8','m9','m10','m11','m12','latitud','longitud','building_cooling_fuel_type','building_heating_fuel_type','currency']
+                    'm1','m2','m3','m4','m5','m6','m7','m8','m9','m10','m11','m12','latitude','longitude','building_cooling_fuel_type','building_heating_fuel_type','currency']
 
         #self.df_detail.columns = ["building_ID", "bill_start_dates", "bill_end_dates", "energy_type",
         #                          "energy_unit", "energy_consumption", "energy_cost"]
@@ -51,9 +51,11 @@ class Portfolio:
     def get_utility_by_building_id_and_energy_type(self, building_ID, energy_type,anio):
         # energy_type: 1 ~ electricity; 2 ~ fossil fuel
         df_temp = self.df_meta.loc[self.df_meta['building_ID'] == building_ID]
-        
+        a = df_temp.values
+        a = a[0]
         consumos = []
-
+        meses_start = []
+        meses_end = []
         #Creamos los meses
         ene_s = datetime.strptime('01/01/'+str(anio), '%d/%m/%Y').date()
         feb_s = datetime.strptime('01/02/'+str(anio), '%d/%m/%Y').date()
@@ -84,19 +86,19 @@ class Portfolio:
         dic_e = datetime.strptime('31/12/'+str(anio), '%d/%m/%Y').date()
 
         meses_end = [ene_e,feb_e,mar_e,abr_e,may_e,jun_e,jul_e,ago_e,sep_e,oct_e,nov_e,dic_e]
-
-        consumos.append(round(df_temp.loc[0].m1))
-        consumos.append(round(df_temp.loc[0].m2))
-        consumos.append(round(df_temp.loc[0].m3))
-        consumos.append(round(df_temp.loc[0].m4))
-        consumos.append(round(df_temp.loc[0].m5))
-        consumos.append(round(df_temp.loc[0].m6))
-        consumos.append(round(df_temp.loc[0].m7))
-        consumos.append(round(df_temp.loc[0].m8))
-        consumos.append(round(df_temp.loc[0].m9))
-        consumos.append(round(df_temp.loc[0].m10))
-        consumos.append(round(df_temp.loc[0].m11))
-        consumos.append(round(df_temp.loc[0].m12))        
+        
+        consumos.append(round(a[12]))
+        consumos.append(round(a[13]))
+        consumos.append(round(a[14]))
+        consumos.append(round(a[15]))
+        consumos.append(round(a[16]))
+        consumos.append(round(a[17]))
+        consumos.append(round(a[18]))
+        consumos.append(round(a[19]))
+        consumos.append(round(a[20]))
+        consumos.append(round(a[21]))
+        consumos.append(round(a[22]))
+        consumos.append(round(a[23]))
 
         if energy_type==1:
             tipo_energia = "Electricity - Grid Purchased"
@@ -145,10 +147,12 @@ class Portfolio:
                             df_temp.iloc[0]['building_address'], \
                             df_temp.iloc[0]['building_space_type_1st'], \
                             df_temp.iloc[0]['building_area'], \
+                            df_temp.iloc[0]['latitude'], \
+                            df_temp.iloc[0]['longitude'], \
                             df_temp.iloc[0]['currency']
         except:
             building_info = None
-            print('Cannot find the building with ID: ' + str(building_ID))
+            print('No se encuentra un edificio con ese ID: ' + str(building_ID))
         return building_info
 
     def fit_model_for_buildings(self):

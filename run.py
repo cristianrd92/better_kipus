@@ -28,6 +28,7 @@ df_first = df_first[np.isfinite(df_first['building_area'])]
 list_ubid=list()
 list_lat=list()
 list_lng=list()
+list_address=list()
 
 df_first = df_first.drop_duplicates('building_ID')
 for i,d in df_first.iterrows():
@@ -43,13 +44,15 @@ for i,d in df_first.iterrows():
     lat = geocode_result[0]['geometry']['location']['lat']
     lng = geocode_result[0]['geometry']['location']['lng']
     ubid = openlocationcode.encode(lat,lng)
+    list_address.append(x)
     list_lat.append(lat)
     list_lng.append(lng)
     list_ubid.append(ubid)
 
-df_first['Latitude'] = list_lat
-df_first['Longitude']  = list_lng
+df_first['latitude'] = list_lat
+df_first['longitude']  = list_lng
 df_first['building_ID'] = list_ubid
+df_first['building_address'] = list_address
 #Eliminamos las filas duplicadas
 #Generamos Excel con el que trabajara better
 df_first.to_excel(data_path+'portfolio.xlsx', sheet_name='example',index=False)
@@ -59,7 +62,7 @@ df_first.to_excel(data_path+'portfolio.xlsx', sheet_name='example',index=False)
     # Change the building id and saving target for the building you want to analyze
 print('Ingrese año')
 anio = input()
-for id_bg in list_ubid:
-    run_single(bldg_id=id_bg, saving_target=2, cached_weather=False,anio=anio)
+for x in range(len(df_first)):
+    run_single(bldg_id=df_first.iloc[x]['building_ID'], saving_target=2, cached_weather=False,anio=anio)
     # Uncomment the line below [delete the '#' before run_batch(...)] to run the analysis for buildings between start_id and end_id
 #run_batch(start_id = 1, end_id = 2, saving_target=2, cached_weather=False, batch_report=True, use_default_benchmark_data=True)
