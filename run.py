@@ -15,7 +15,7 @@ gmaps = googlemaps.Client(key='AIzaSyBUEx8t5HyVP5YMjnUPu0rIyuhVmR6Hzy0')
 
 s_path = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
 data_path = s_path + '/Data/'
-df_first = pd.read_excel(data_path + 'datos.xlsx', sheet_name="Datos", skiprows=[0], usecols="A:X")
+df_first = pd.read_excel(data_path + 'datos.xlsx', sheet_name="Datos", skiprows=[0,2], usecols="A:X")
 
 #Cambiamos nombre a columnas
 df_first.columns = ["region_id",'comuna','institution', "building_name", "building_address","building_ID" ,"building_area",
@@ -24,6 +24,9 @@ df_first.columns = ["region_id",'comuna','institution', "building_name", "buildi
 #Eliminamos toda fila con area no definida
 df_first = df_first[np.isfinite(df_first['building_area'])]
 #Creamos columnas nuevas latitud y longitud
+
+
+
 
 list_ubid=list()
 list_lat=list()
@@ -55,15 +58,13 @@ df_first['building_ID'] = list_ubid
 df_first['building_address'] = list_address
 #Eliminamos las filas duplicadas
 #Generamos Excel con el que trabajara better
-df_first.to_excel(data_path+'portfolio.xlsx', sheet_name='example',index=False)
+df_first.to_excel(data_path+'portfolio.xlsx', sheet_name='datos_procesados',index=False)
 
-# Notes:
-    # Saving target: 1 ~ conservative, 2 ~ nominal, 3 ~ aggressive
-    # Change the building id and saving target for the building you want to analyze
 print('Ingrese año')
 anio = input()
 for x in range(len(df_first)):
-    print("-------------------------------------------")
+    print('')
+    print("---------------------------------------------------------------")
     run_single(bldg_id=df_first.iloc[x]['building_ID'], saving_target=2, cached_weather=False,anio=anio)
     # Uncomment the line below [delete the '#' before run_batch(...)] to run the analysis for buildings between start_id and end_id
 #run_batch(start_id = 1, end_id = 2, saving_target=2, cached_weather=False, batch_report=True, use_default_benchmark_data=True)
