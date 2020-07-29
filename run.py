@@ -72,9 +72,9 @@ for x in range(12):
     suma = sum([fila[x] for fila  in estacionalidad_general])
     estacionalidad_meses.append(suma/len(estacionalidad_general))
 
+#Algortimo para completar datos de meses faltantes
 for x in range (len(df_first)):
     b = np.array(df_first.iloc[x,12:24])
-    print(b)
     c = np.array(b, dtype = np.float)
     c[np.isnan(c)] = 0
     promedio = np.mean(c)
@@ -134,7 +134,6 @@ for x in range (len(df_first)):
     #Completamos valor faltante en diciembre
     if (b[11]==0 or math.isnan(b[11])):
         b[11] = promedio*estacionalidad_meses[11]
-    print(b)
     df_first.iloc[x,12:24]=b
 
 
