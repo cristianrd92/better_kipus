@@ -63,6 +63,7 @@ df_first.to_excel(data_path+'portfolio.xlsx', sheet_name='example',index=False)
 print('Ingrese año')
 anio = input()
 for x in range(len(df_first)):
+    print("-------------------------------------------")
     run_single(bldg_id=df_first.iloc[x]['building_ID'], saving_target=2, cached_weather=False,anio=anio)
     # Uncomment the line below [delete the '#' before run_batch(...)] to run the analysis for buildings between start_id and end_id
 #run_batch(start_id = 1, end_id = 2, saving_target=2, cached_weather=False, batch_report=True, use_default_benchmark_data=True)

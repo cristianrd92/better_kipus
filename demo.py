@@ -93,12 +93,12 @@ def run_single(
     
             # Output to files
             # Save FIM to csv
-            if (hasattr(building_test, 'FIM_table_e')):
-                if write_model: building_test.coeff_out_e.to_csv(report_path + 'bldg_' + str(building_test.bldg_id) + "_Electricity Coeffs_out.csv")
-                if write_fim: building_test.FIM_table_e.to_csv(report_path + 'bldg_' + str(building_test.bldg_id) + "_Electricity FIM_recommendations.csv")
-            if (hasattr(building_test, 'FIM_table_f')):
-                if write_model: building_test.coeff_out_f.to_csv(report_path + 'bldg_' + str(building_test.bldg_id) + "_Fossil Fuel Coeffs_out.csv")
-                if write_fim: building_test.FIM_table_f.to_csv(report_path + 'bldg_' + str(building_test.bldg_id) + "_Fossil Fuel FIM_recommendations.csv")
+            #if (hasattr(building_test, 'FIM_table_e')):
+                #if write_model: building_test.coeff_out_e.to_csv(report_path + 'bldg_' + str(building_test.bldg_id) + "_Electricity Coeffs_out.csv")
+                #if write_fim: building_test.FIM_table_e.to_csv(report_path + 'bldg_' + str(building_test.bldg_id) + "_Electricity FIM_recommendations.csv")
+            #if (hasattr(building_test, 'FIM_table_f')):
+                #if write_model: building_test.coeff_out_f.to_csv(report_path + 'bldg_' + str(building_test.bldg_id) + "_Fossil Fuel Coeffs_out.csv")
+                #if write_fim: building_test.FIM_table_f.to_csv(report_path + 'bldg_' + str(building_test.bldg_id) + "_Fossil Fuel FIM_recommendations.csv")
     
             # Generate static HTML report
             report_building = report.Report(building = building_test)

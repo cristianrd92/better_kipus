@@ -115,7 +115,7 @@ class Report:
     def generate_building_report_beta(self, report_path):
         report_file = report_path + str(self.building.bldg_id) + '_' + self.building.bldg_address + '_' + self.building.bldg_name + '_report.html'
         report_file = report_file.replace(' ', '_')
-        print(report_file)
+        #print(report_file)
         with open(report_file, 'w', encoding="utf-8") as report_html:
             report_html.write('<!DOCTYPE html>')
             report_html.write('<html>')
@@ -616,8 +616,8 @@ class Report:
     def add_3d_scatter_trace(name, v_x, v_y, v_z, info, v_s, c_str):
         import math
     
-        print(v_x)
-        print(v_y)
+        #print(v_x)
+        #print(v_y)
 
         # Sanitize data
         v_x = ['null' if isinstance(x, str) else x for x in v_x]
@@ -693,7 +693,7 @@ class Report:
     def add_2d_scatter_plot(df_summary):
         div_id = str(datetime.datetime.now())
 
-        print(div_id)
+        #print(div_id)
         locations = df_summary['Building Address'].unique()
         scatter_html = ''
         scatter_html += '''

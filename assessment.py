@@ -46,10 +46,10 @@ class LEAN_FIMs:
         self.targets = np.zeros(self.n)
 
         # print(self.n)
-        print('---------------------------------------------------------------')
-        print(self.utility_type_str)
-        print('Coeficientes del sitio:')
-        print(self.site_coeffs)
+        #print('---------------------------------------------------------------')
+        #print(self.utility_type_str)
+        #print('Coeficientes del sitio:')
+        #print(self.site_coeffs)
 
         if target_level == 1:
             for i in range(0, self.n):
@@ -89,9 +89,9 @@ class LEAN_FIMs:
         self.hdd_targ = self.targets[3]
         self.beth_targ = self.targets[4]
 
-        print('Coeficientes objetivo:')
-        print(self.targets)
-        print('---------------------------------------------------------------')
+        #print('Coeficientes objetivo:')
+        #print(self.targets)
+        #print('---------------------------------------------------------------')
 
     def FIM_recommendations(self, save_file=True):
         column = ['FIM Recommendations']

@@ -281,7 +281,7 @@ class Portfolio:
 
     def prepare_portfolio_report_data(self, v_single_buildings, report_path):
         # This function prepares the data for portfolio report
-        print(v_single_buildings)
+        #print(v_single_buildings)
         # Count of effective building in the porfolio
         count = 0
         total_area = 0
@@ -431,8 +431,8 @@ if __name__ == "__main__":
     df_bench_coeffs_e = p.generate_benchmark_stats(df_models_e)
     df_bench_coeffs_f = p.generate_benchmark_stats(df_models_f)
 
-    print(df_bench_coeffs_e)
-    print(df_bench_coeffs_f)
+    #print(df_bench_coeffs_e)
+    #print(df_bench_coeffs_f)
 
     # df_models_e.to_csv('C:/Users/Han/Dropbox (Energy Technologies)/Projects/CERC-BEE  Benchmarking Tool/Demonstration/2018-11-05/tool/data/models_e.csv')
     # df_models_f.to_csv('C:/Users/Han/Dropbox (Energy Technologies)/Projects/CERC-BEE  Benchmarking Tool/Demonstration/2018-11-05/tool/data/models_f.csv')
