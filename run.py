@@ -150,20 +150,30 @@ indice =0
 for x in valores_q:
     if x<lower or x>higher:
         df_first = df_first.drop(indice)
-    indice++
+    indice+=1
+
 #print(q1,q3,iqr,lower,higher,valores_q)
-
-
-
-    
-
-
 
 list_ubid=list()
 list_lat=list()
 list_lng=list()
 list_address=list()
 
+
+w = 400
+h = 400
+zoom = 16
+lat = -36.4857709
+lng = -72.70260139999999
+
+def getPointLatLng(x, y):
+    parallelMultiplier = math.cos(lat * math.pi / 180)
+    degreesPerPixelX = 360 / math.pow(2, zoom + 8)
+    degreesPerPixelY = 360 / math.pow(2, zoom + 8) * parallelMultiplier
+    pointLat = lat - degreesPerPixelY * ( y - h / 2)
+    pointLng = lng + degreesPerPixelX * ( x  - w / 2)
+
+    return (pointLat, pointLng)
 
 for i,d in df_first.iterrows():
     #Comienza proceso de confeccion de direccion
@@ -175,13 +185,32 @@ for i,d in df_first.iterrows():
     x = x[0]+' '+n+','+x[-1]+', Chile'
     #Finaliza confeccion direccion
     geocode_result = gmaps.geocode(x)
+    #print(geocode_result)
+    #print('-------------------------')
+    n_lat = geocode_result[0]['geometry']['viewport']['northeast']['lat']
+    n_lng = geocode_result[0]['geometry']['viewport']['northeast']['lng']
+    s_lat = geocode_result[0]['geometry']['viewport']['southwest']['lat']
+    s_lng = geocode_result[0]['geometry']['viewport']['southwest']['lng']
     lat = geocode_result[0]['geometry']['location']['lat']
     lng = geocode_result[0]['geometry']['location']['lng']
+    #print(lat,lng)
+    #print(n_lat,n_lng)
+    #print(s_lat,s_lng)
+    #input()
     ubid = openlocationcode.encode(lat,lng)
     list_address.append(x)
     list_lat.append(lat)
     list_lng.append(lng)
     list_ubid.append(ubid)
+print(lat,lng)
+#NE
+print(getPointLatLng(w, 0))
+#SW
+print(getPointLatLng(0, h))
+#NW
+print(getPointLatLng(0, 0))
+#SE
+print(getPointLatLng(w, h))
 
 df_first['latitude'] = list_lat
 df_first['longitude']  = list_lng
