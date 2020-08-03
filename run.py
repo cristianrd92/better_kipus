@@ -16,12 +16,12 @@ gmaps = googlemaps.Client(key='AIzaSyBUEx8t5HyVP5YMjnUPu0rIyuhVmR6Hzy0')
 
 s_path = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
 data_path = s_path + '/Data/'
-df_first = pd.read_excel(data_path + 'datos.xlsx', sheet_name="Datos", skiprows=[0,2], usecols="A:X")
+df_first = pd.read_excel(data_path + 'datos.xlsx', sheet_name="Datos", skiprows=[0,2], usecols="A:Y")
 
 #Cambiamos nombre a columnas
 df_first.columns = ["region_id",'comuna','institution', "building_name", "building_address","building_ID" ,"building_area",
                     "building_space_type_1st", "building_space_type_2nd", "service",'medidor','clasificacion',
-                    'm1','m2','m3','m4','m5','m6','m7','m8','m9','m10','m11','m12']
+                    'm1','m2','m3','m4','m5','m6','m7','m8','m9','m10','m11','m12','pisos']
 #Eliminamos toda fila con area no definida
 df_first = df_first[np.isfinite(df_first['building_area'])]
 #Creamos columnas nuevas latitud y longitud
@@ -219,11 +219,38 @@ df_first['building_address'] = list_address
 #Generamos Excel con el que trabajara better
 df_first.to_excel(data_path+'portfolio.xlsx', sheet_name='datos_procesados',index=False)
 
+
+list_cluster_a = list()
+list_cluster_b = list()
+list_cluster_c = list()
+list_cluster_d = list()
+
 print('Ingrese año')
 anio = input()
 for x in range(len(df_first)):
     print('')
     print("---------------------------------------------------------------")
     run_single(bldg_id=df_first.iloc[x]['building_ID'], saving_target=2, cached_weather=False,anio=anio)
-    # Uncomment the line below [delete the '#' before run_batch(...)] to run the analysis for buildings between start_id and end_id
-#run_batch(start_id = 1, end_id = 2, saving_target=2, cached_weather=False, batch_report=True, use_default_benchmark_data=True)
+    #Desde función run single se generan variables globales que son las que necesitamos para asignacion de cluster
+    #Se preproceso toda la informacion por lo cual ya podemos asignar cluster
+
+    #Cluster A (Tamaño)
+    if df_first.iloc[x]['pisos']<=3 and df_first.iloc[x]['building_area']<2322:
+        cluster_a = 1 #"Small"
+    elif df_first.iloc[x]['pisos']>6 or  df_first.iloc[x]['building_area']>9290:
+        cluster_a = 3 #"Large"
+    else:
+        cluster_a = 2 #"Medium"
+    list_cluster_a.append(cluster_a)
+
+    #Cluster B (HVAC Type)
+    if df_first.iloc[x]['heating_type']=='Gas':
+        cluster_b = 2
+    elif df_first.iloc[x]['air_conditioning']=='Single':
+        cluster_b = 1
+    else:  
+        cluster_b = 3
+    list_cluster_b.append(cluster_b)
+
+
+
