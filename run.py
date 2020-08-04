@@ -10,6 +10,7 @@ from scipy.spatial import distance
 from pandas import ExcelWriter
 import openlocationcode
 import numpy as np
+import csv_kipus
 import math
 import googlemaps
 import model
@@ -252,6 +253,15 @@ def split(arr, size):
     arrs.append(arr)
     return arrs
 
+
+
+
+
+
+
+
+suma_anuales = list()
+ 
 print('Ingrese año')
 anio = input()
 for x in range(len(df_first)):
@@ -279,6 +289,9 @@ for x in range(len(df_first)):
         cluster_b = 3
     list_cluster_b.append(cluster_b)
     
+    #Sumamos costos anuales y los agregamos a una lista
+    suma_anuales.append(sum(df_first.iloc[x,12:24]))
+
     #Agregamos todos los valores que calculo better para trabajar con ellos
     list_baseload.append(model.baseload)
     list_cooling_change_point.append(model.cooling_change_point)
@@ -355,3 +368,4 @@ df_first['cluster_c'] = list_cluster_c
 df_first['cluster_d'] = list_cluster_d
 
 df_first.to_excel(report_path+'Datos Finales.xlsx', sheet_name='Datos',index=False)
+csv_kipus.crear_csv(df_first,list_ubid,list_address,suma_anuales)
