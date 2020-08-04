@@ -6,6 +6,7 @@ NOTICE.  This Software was developed under funding from the U.S. Department of E
 
 from demo import *
 import pandas as pd
+from scipy.spatial import distance
 from pandas import ExcelWriter
 import openlocationcode
 import numpy as np
@@ -17,6 +18,7 @@ gmaps = googlemaps.Client(key='AIzaSyBUEx8t5HyVP5YMjnUPu0rIyuhVmR6Hzy0')
 
 s_path = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
 data_path = s_path + '/Data/'
+report_path = s_path + '/outputs/'
 df_first = pd.read_excel(data_path + 'datos.xlsx', sheet_name="Datos", skiprows=[0,2], usecols="A:AA")
 
 #Cambiamos nombre a columnas
@@ -225,8 +227,15 @@ list_baseload = list()
 list_cluster_a = list()
 list_cluster_b = list()
 list_cluster_c = list()
+vector_cluster_d = list()
 #Variables ya que sirven para asignacion de cluster c, estas ya fuerona calculadas obtenidas de wiki CityBES 
 vector_cluster_c = [7.323208,35.72581,47.953624,250.00000,15.427423,130.69231]
+vector_cluster_d_sin_estandarizar = [3.545455,12.030303,14.46364,19.39258,31.800000,24.000000,14.47000,16.76000,5.435897,9.076923,12.71026,14.71795]
+promedio_v_d = np.mean(vector_cluster_d_sin_estandarizar)
+desviacion_v_d = np.std(vector_cluster_d_sin_estandarizar)
+
+vector_cluster_d=(vector_cluster_d_sin_estandarizar-promedio_v_d)/desviacion_v_d
+
 list_hvac = list()
 list_cooling_change_point = list()
 list_cooling_sensitivity = list()
@@ -288,9 +297,9 @@ for x in range(len(df_first)):
     #Primero va HVAC luego Baseload
     vector_c_comparable = [hvac,model.baseload]
 
-    dis_vc1 = np.linalg.norm(vector_c_1-vector_c_comparable)
-    dis_vc2 = np.linalg.norm(vector_c_2-vector_c_comparable)
-    dis_vc3 = np.linalg.norm(vector_c_3-vector_c_comparable)
+    dis_vc1 = distance.euclidean(vector_c_1,vector_c_comparable)
+    dis_vc2 = distance.euclidean(vector_c_2,vector_c_comparable)
+    dis_vc3 = distance.euclidean(vector_c_3,vector_c_comparable)
     
     #Generamos un array con los 3 valores de distancia ucleidiana c
     list_ucle_c = [dis_vc1,dis_vc2,dis_vc3]
@@ -299,4 +308,50 @@ for x in range(len(df_first)):
     for numero in list_ucle_c:
         if numero < cluster_c:
             cluster_c = numero
+    if cluster_c == dis_vc1:
+        cluster_c = 1
+    elif cluster_c == dis_vc2:
+        cluster_c = 2
+    else:
+        cluster_c = 3
     list_cluster_c.append(cluster_c)
+
+    #Cluser D (Sensitivity y change point)
+    #Dividimos vector y creamos una matriz de tamaño 3
+    vector_d = split(vector_cluster_d,4)
+    #Generamos vector del edificio
+    vector = [model.cooling_sensitivity,model.heating_sensitivity,model.heating_start_point,model.cooling_change_point]
+    #Estandarizamos vector del edificio vs valores estandarizados de referencia
+    v1=(vector-promedio_v_d)/desviacion_v_d
+    dis_vd1 = distance.euclidean(vector_d[0],v1)
+    dis_vd2 = distance.euclidean(vector_d[1],v1)
+    dis_vd3 = distance.euclidean(vector_d[2],v1)
+
+    list_ucle_d = [dis_vd1,dis_vd2,dis_vd3]
+    cluster_d = list_ucle_d[0]
+    #Recorrer y comparar
+    for numero in list_ucle_d:
+        if numero < cluster_d:
+            cluster_d = numero
+    if cluster_d == dis_vd1:
+        cluster_d = 1
+    elif cluster_d == dis_vd2:
+        cluster_d = 2
+    else:
+        cluster_d = 3
+    list_cluster_d.append(cluster_d)
+
+#Agregamos variables a un excel con todos los datos procesador por better
+df_first['hvac'] = list_hvac
+df_first['baseload'] = list_baseload
+df_first['cooling_change_point'] = list_cooling_change_point
+df_first['cooling_sensitivity'] = list_cooling_sensitivity
+df_first['heating_start_point'] = list_heating_start_point
+df_first['heating_sensitivity'] = list_heating_sensitivity
+#Agregamos a excel las asiganciones de cluster
+df_first['cluster_a'] = list_cluster_a
+df_first['cluster_b'] = list_cluster_b
+df_first['cluster_c'] = list_cluster_c
+df_first['cluster_d'] = list_cluster_d
+
+df_first.to_excel(report_path+'Datos Finales.xlsx', sheet_name='Datos',index=False)
