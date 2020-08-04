@@ -118,4 +118,4 @@ def crear_csv(df_first,list_ubid,list_address,suma_anuales):
 
     now = datetime.now()
     fecha = str(now.day)+str(now.month)+str(now.year)
-    df_csv.to_csv(citybes+'chile_dataset'+fecha+'.csv',encoding='utf-8',index=False)
+    df_csv.to_csv(citybes+'chile_dataset_'+fecha+'.csv',encoding='utf-8',index=False)
