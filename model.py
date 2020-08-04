@@ -14,6 +14,12 @@ import numpy as np
 import constants
 
 
+baseload=0.0
+cooling_change_point=0.0
+cooling_sensitivity=0.0
+heating_start_point=0.0
+heating_sensitivity=0.0
+
 class InverseModel:
     def __init__(self, temperature, eui, energy_type='Energy type unknown', significance_threshold=0.1):
 
@@ -398,6 +404,13 @@ class InverseModel:
 
     def describe_model_html(self, building):
         model_description_html = ""
+        
+        global baseload
+        global cooling_change_point
+        global cooling_sensitivity
+        global heating_start_point
+        global heating_sensitivity
+
         if (self.has_fit):
             model_description_html += '<p>'
             model_description_html += '<b>' + self.energy_type + ':</b> '
@@ -411,8 +424,15 @@ class InverseModel:
             model_description_html += '</p>'
         else:
             model_description_html = ''
-        self.model_description_html = model_description_html
 
+        baseload = round(self.base * 1 * constants.Constants.days_in_year, 1)
+        cooling_change_point = round(self.ccp, 1)
+        cooling_sensitivity = round(building.bldg_area * self.csl, 1)
+        heating_start_point = round(self.hcp, 1)
+        heating_sensitivity = round(abs(building.bldg_area * self.hsl), 1)
+
+        self.model_description_html = model_description_html
+        
     def print_IM(self):
         print("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
         print("Final Model:")

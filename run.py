@@ -11,25 +11,27 @@ import openlocationcode
 import numpy as np
 import math
 import googlemaps
+import model
 
 gmaps = googlemaps.Client(key='AIzaSyBUEx8t5HyVP5YMjnUPu0rIyuhVmR6Hzy0')
 
 s_path = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
 data_path = s_path + '/Data/'
-df_first = pd.read_excel(data_path + 'datos.xlsx', sheet_name="Datos", skiprows=[0,2], usecols="A:Y")
+df_first = pd.read_excel(data_path + 'datos.xlsx', sheet_name="Datos", skiprows=[0,2], usecols="A:AA")
 
 #Cambiamos nombre a columnas
 df_first.columns = ["region_id",'comuna','institution', "building_name", "building_address","building_ID" ,"building_area",
                     "building_space_type_1st", "building_space_type_2nd", "service",'medidor','clasificacion',
-                    'm1','m2','m3','m4','m5','m6','m7','m8','m9','m10','m11','m12','pisos']
+                    'm1','m2','m3','m4','m5','m6','m7','m8','m9','m10','m11','m12','heating_type','air_conditioning','pisos']
 #Eliminamos toda fila con area no definida
 df_first = df_first[np.isfinite(df_first['building_area'])]
-#Creamos columnas nuevas latitud y longitud
+
 estacionalidad_general = list()
 estacionalidad_meses = list()
 #Eliminamos las filas duplicadas
 df_first = df_first.drop_duplicates('building_ID')
 df_first = df_first.reset_index(drop=True)
+
 #Algoritmo para verificar valores nulos, vacios o en 0 en el dataframe para excluir meses en calculo factor estacionalidad
 df_temp = df_first.isnull().sum(axis=1)
 
@@ -67,7 +69,6 @@ for x in range (len(df_temp)):
     estacionalidad_meses = list()
 
 #Calculamos los factores de estacionalidad de cada uno de los 12 meses
-estacionalidad_meses = list()
 for x in range(12):
     suma = sum([fila[x] for fila  in estacionalidad_general])
     estacionalidad_meses.append(suma/len(estacionalidad_general))
@@ -202,15 +203,16 @@ for i,d in df_first.iterrows():
     list_lat.append(lat)
     list_lng.append(lng)
     list_ubid.append(ubid)
-print(lat,lng)
+#print(lat,lng)
 #NE
-print(getPointLatLng(w, 0))
+#print(getPointLatLng(w, 0))
 #SW
-print(getPointLatLng(0, h))
+#print(getPointLatLng(0, h))
 #NW
-print(getPointLatLng(0, 0))
+#print(getPointLatLng(0, 0))
 #SE
-print(getPointLatLng(w, h))
+#print(getPointLatLng(w, h))
+
 
 df_first['latitude'] = list_lat
 df_first['longitude']  = list_lng
@@ -219,11 +221,27 @@ df_first['building_address'] = list_address
 #Generamos Excel con el que trabajara better
 df_first.to_excel(data_path+'portfolio.xlsx', sheet_name='datos_procesados',index=False)
 
-
+list_baseload = list()
 list_cluster_a = list()
 list_cluster_b = list()
 list_cluster_c = list()
+#Variables ya que sirven para asignacion de cluster c, estas ya fuerona calculadas obtenidas de wiki CityBES 
+vector_cluster_c = [7.323208,35.72581,47.953624,250.00000,15.427423,130.69231]
+list_hvac = list()
+list_cooling_change_point = list()
+list_cooling_sensitivity = list()
+list_heating_start_point = list()
+list_heating_sensitivity = list()
 list_cluster_d = list()
+
+def split(arr, size):
+    arrs = []
+    while len(arr) > size:
+        pice = arr[:size]
+        arrs.append(pice)
+        arr   = arr[size:]
+    arrs.append(arr)
+    return arrs
 
 print('Ingrese año')
 anio = input()
@@ -251,6 +269,34 @@ for x in range(len(df_first)):
     else:  
         cluster_b = 3
     list_cluster_b.append(cluster_b)
+    
+    #Agregamos todos los valores que calculo better para trabajar con ellos
+    list_baseload.append(model.baseload)
+    list_cooling_change_point.append(model.cooling_change_point)
+    list_cooling_sensitivity.append(model.cooling_sensitivity)
+    list_heating_start_point.append(model.heating_start_point)
+    list_heating_sensitivity.append(model.heating_sensitivity)
+    #HVAC
+    hvac = (sum(df_first.iloc[x,12:24])/df_first.iloc[x]['building_area'])-model.baseload
+    list_hvac.append(hvac)
 
+    #Cluser C (HVAC vs Equipo)
+    #Generamos los vectores que hay que comparar
+    vector_c_1 = [vector_cluster_c[0],vector_cluster_c[1]]
+    vector_c_2 = [vector_cluster_c[2],vector_cluster_c[3]]
+    vector_c_3 = [vector_cluster_c[4],vector_cluster_c[5]]
+    #Primero va HVAC luego Baseload
+    vector_c_comparable = [hvac,model.baseload]
 
-
+    dis_vc1 = np.linalg.norm(vector_c_1-vector_c_comparable)
+    dis_vc2 = np.linalg.norm(vector_c_2-vector_c_comparable)
+    dis_vc3 = np.linalg.norm(vector_c_3-vector_c_comparable)
+    
+    #Generamos un array con los 3 valores de distancia ucleidiana c
+    list_ucle_c = [dis_vc1,dis_vc2,dis_vc3]
+    cluster_c = list_ucle_c[0]
+    #Recorrer y comparar
+    for numero in list_ucle_c:
+        if numero < cluster_c:
+            cluster_c = numero
+    list_cluster_c.append(cluster_c)

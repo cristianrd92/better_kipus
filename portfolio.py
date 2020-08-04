@@ -31,7 +31,7 @@ class Portfolio:
 
     def read_raw_data_from_xlsx(self, filename):
         # clean up the raw data and save it as a dataframe
-        self.df_meta = pd.read_excel(filename, sheet_name="datos_procesados", usecols="A:Z")
+        self.df_meta = pd.read_excel(filename, sheet_name="datos_procesados", usecols="A:AC")
         # Change column names in the dataframe
         self.df_meta['building_cooling_fuel_type'] = ''
         self.df_meta['building_heating_fuel_type'] = ''
@@ -39,7 +39,8 @@ class Portfolio:
 
         self.df_meta.columns = ['region_id','comuna','institution', "building_name", "building_address","building_ID" ,"building_area",
                     "building_space_type_1st", "building_space_type_2nd", "service",'medidor','clasificacion',
-                    'm1','m2','m3','m4','m5','m6','m7','m8','m9','m10','m11','m12','latitude','longitude','building_cooling_fuel_type','building_heating_fuel_type','currency']
+                    'm1','m2','m3','m4','m5','m6','m7','m8','m9','m10','m11','m12','heating_type','air_conditioning','pisos',
+                    'latitude','longitude','building_cooling_fuel_type','building_heating_fuel_type','currency']
 
         #self.df_detail.columns = ["building_ID", "bill_start_dates", "bill_end_dates", "energy_type",
         #                          "energy_unit", "energy_consumption", "energy_cost"]
