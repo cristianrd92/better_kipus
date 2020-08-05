@@ -54,9 +54,9 @@ class Portfolio:
         df_temp = self.df_meta.loc[self.df_meta['building_ID'] == building_ID]
         a = df_temp.values
         a = a[0]
-        consumos = []
-        meses_start = []
-        meses_end = []
+        consumos = list()
+        meses_start = list()
+        meses_end = list()
         #Creamos los meses
         ene_s = datetime.strptime('01/01/'+str(anio), '%d/%m/%Y').date()
         feb_s = datetime.strptime('01/02/'+str(anio), '%d/%m/%Y').date()
@@ -104,20 +104,21 @@ class Portfolio:
         if energy_type==1:
             tipo_energia = "Electricity - Grid Purchased"
             unidad = 'kWh'
-        else:
-            tipo_energia = "Natural Gas"
-            unidad = 'Therms'
-
-        d = {'bill_start_dates': meses_start, 'bill_end_dates': meses_end,
-        'energy_type':tipo_energia,'energy_unit':unidad,'energy_consumption':consumos,'energy_cost':None}
-        
-        df_temp = pd.DataFrame(data=d)
+        #else:
+            #tipo_energia = "Electricity - Grid Purchased"
+            #unidad = 'kWh'
+            #tipo_energia = "Natural Gas"
+            #unidad = 'Therms'
 
         if (energy_type == 1):
+            d = {'bill_start_dates': meses_start, 'bill_end_dates': meses_end,
+        'energy_type':tipo_energia,'energy_unit':unidad,'energy_consumption':consumos,'energy_cost':None}
+            df_temp = pd.DataFrame(data=d)
             df_temp = df_temp.loc[df_temp['energy_type'] == 'Electricity - Grid Purchased']
             if df_temp.empty: return None
         else:
-            df_temp = df_temp.loc[df_temp['energy_type'] != 'Electricity - Grid Purchased']
+            df_temp = pd.DataFrame()
+            #df_temp = df_temp.loc[df_temp['energy_type'] != 'Electricity - Grid Purchased']
             if df_temp.empty: return None
 
             '''

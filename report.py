@@ -90,11 +90,11 @@ class Report:
         html_text += '        <a href="#" onclick="w3_close()" class="w3-hide-large w3-right w3-jumbo w3-padding w3-hover-grey" title="close menu">'
         html_text += '            <i class="fa fa-remove"></i>'
         html_text += '        </a>'
-        html_text += self.lbl_logo
+        #html_text += self.lbl_logo
         html_text += self.icf_logo
         html_text += self.jci_logo
         html_text += '        <br><br>'
-        html_text += '        <h4><b>Building Efficiency Targeting Tool for Energy Retrofits (BETTER)</b></h4>'
+        html_text += '        <h4><b>Reporte Preliminar de Eficiencia Energética Gestiona Energía - Kipus</b></h4>'
         html_text += '        <p class="w3-text-grey">' + datetime.datetime.now().strftime("%Y-%m-%d  %H:%M") + '</p>'
         html_text += '    </div>'
         html_text += '    <div class="w3-bar-block">'
@@ -430,17 +430,9 @@ class Report:
             report_html.write('    <div class="w3-half">')
             report_html.write('      <h3>Partners</h3>')
             # report_html.write('      <p>Place holder.</p>')
-            report_html.write(self.lbl_logo)
+            #report_html.write(self.lbl_logo)
             report_html.write(self.icf_logo)
             report_html.write(self.jci_logo)
-            report_html.write('    </div>')
-            report_html.write('    <div class="w3-half">')
-            report_html.write('      <h3>Links</h3>')
-            report_html.write('      <ul class="w3-ul w3-hoverable">')
-            report_html.write('        <li class="w3-padding-16">')
-            report_html.write('          <span class="w3-large"><a href="https://github.com/LBNL-JCI-ICF/better">GitHub Repository</a></span><br>')
-            report_html.write('        </li>')
-            report_html.write('      </ul>')
             report_html.write('    </div>')
             report_html.write('  </div>')
             report_html.write('  </footer>')
@@ -473,11 +465,10 @@ class Report:
         return(report_file)
 
     def logo(self):
-        self.cerc_logo = '<a href="https://cercbee.lbl.gov/"><img src="https://cercbee.lbl.gov/sites/default/files/styles/max_image/public/images/cerc_logo.jpg?itok=HE_BbWn3" style="height:220px;"></a>'
-        self.lbl_logo = '<a href="https://www.lbl.gov/"><img src="https://creative.lbl.gov/wp-content/uploads/sites/23/2015/05/Berkeley_Lab_Logo_Large.png" style="height:100px;"></a>'
-        self.icf_logo = '<a href="https://www.icf.com/"><img src="https://upload.wikimedia.org/wikipedia/commons/2/29/ICF_International_logo.png" style="height:100px;"></a>'
-        self.jci_logo = '<a href="https://www.johnsoncontrols.com/"><img src="https://upload.wikimedia.org/wikipedia/en/thumb/0/0f/Johnson_Controls.svg/250px-Johnson_Controls.svg.png" style="height:100px;"></a>'
-
+        #self.cerc_logo = '<a href="https://cercbee.lbl.gov/"><img src="https://cercbee.lbl.gov/sites/default/files/styles/max_image/public/images/cerc_logo.jpg?itok=HE_BbWn3" style="height:220px;"></a>'
+        #self.lbl_logo = '<a href="https://www.lbl.gov/"><img src="https://creative.lbl.gov/wp-content/uploads/sites/23/2015/05/Berkeley_Lab_Logo_Large.png" style="height:100px;"></a>'
+        self.jci_logo = '<a href="https://www.energia.gob.cl/"><img src="https://www.energia.gob.cl/sites/default/files/logo.png" style="height:100px;"></a>'
+        self.icf_logo = '<a href="https://www.kipus.cl/"><img src="https://i.imgur.com/ssnIFYL.png" style="height:100px;width:100%"></a>'
 
     def charts_js(self):
         # Horizontal bar chart
@@ -745,7 +736,7 @@ class Report:
         with open(report_file, 'w', encoding="utf-8") as report_html:
             report_html.write('<!DOCTYPE html>')
             report_html.write('<html>')
-            report_html.write('<title>Building Efficiency Targeting Tool for Energy Retrofits (BETTER) Report</title>')
+            report_html.write('<title>Reporte Preliminar de Eficiencia Energética Gestiona Energía - Kipus</title>')
             report_html.write(self.html_basic())
 
             report_html.write('<body class="w3-light-grey w3-content" style="max-width:1500px">')
@@ -867,19 +858,10 @@ class Report:
             report_html.write('    <div class="w3-half">')
             report_html.write('      <h3>Partners</h3>')
             # report_html.write('      <p>Place holder.</p>')
-            report_html.write(self.lbl_logo)
+            #report_html.write(self.lbl_logo)
             report_html.write(self.icf_logo)
             report_html.write(self.jci_logo)
             report_html.write('    </div>')
-            report_html.write('    <div class="w3-half">')
-            report_html.write('      <h3>Links</h3>')
-            report_html.write('      <ul class="w3-ul w3-hoverable">')
-            report_html.write('        <li class="w3-padding-16">')
-            report_html.write('          <span class="w3-large"><a href="https://github.com/LBNL-CERC-BEE/CERC-BEE-Virtual-Energy-Efficiency-Targeting-Tool">GitHub Repository</a></span><br>')
-            report_html.write('        </li>')
-            report_html.write('      </ul>')
-            report_html.write('    </div>')
-            report_html.write('  </div>')
             report_html.write('  </footer>')
             report_html.write('  <div class="w3-black w3-center w3-padding-24"></div>')
 

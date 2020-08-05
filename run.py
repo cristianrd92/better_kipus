@@ -367,5 +367,9 @@ df_first['cluster_b'] = list_cluster_b
 df_first['cluster_c'] = list_cluster_c
 df_first['cluster_d'] = list_cluster_d
 
+#Creamos archivo excel con todos los datos obtenidos de better
 df_first.to_excel(report_path+'Datos Finales.xlsx', sheet_name='Datos',index=False)
+
+#Creamos archivo csv el cual se utilizara para subir a CityBes
 csv_kipus.crear_csv(df_first,list_ubid,list_address,suma_anuales)
+#geojson.crear_json(df_first,list_ubid,list_address,suma_anuales)
