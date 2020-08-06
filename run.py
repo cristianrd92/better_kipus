@@ -11,6 +11,7 @@ from pandas import ExcelWriter
 import openlocationcode
 import numpy as np
 import csv_kipus
+import geojson_kipus
 import math
 import googlemaps
 import model
@@ -52,7 +53,7 @@ for x in range (len(df_first)):
     b = np.array(df_first.iloc[x,12:24])
     b = b.tolist()
     if b.count(0)>6:
-        print("Fila numero "+str(x)+" contiene mas de 6 numeros 0")
+        #print("Fila numero "+str(x)+" contiene mas de 6 numeros 0")
         df_temp = df_first.drop(x)
 df_first = df_temp.reset_index(drop=True)
 
@@ -77,8 +78,12 @@ for x in range(12):
     estacionalidad_meses.append(suma/len(estacionalidad_general))
 
 valores_q = list()
+list_altura = list()
 #Algortimo para completar datos de meses faltantes
 for x in range (len(df_first)):
+    #Agregamos la altura de los edificios en base a promedio de cada piso es 3
+    list_altura.append(df_first.iloc[x]['pisos']*3)
+    #Convertimos el dataframe seleccionando solamente los consumos en un vector
     b = np.array(df_first.iloc[x,12:24])
     c = np.array(b, dtype = np.float)
     c[np.isnan(c)] = 0
@@ -179,10 +184,24 @@ def getPointLatLng(x, y):
 
     return (pointLat, pointLng)
 
+list_pisos = list()
+list_area = list()
 for i,d in df_first.iterrows():
     #Comienza proceso de confeccion de direccion
     x = d['building_address']
     x = x.split(',')
+    pi = x[2:-1]
+    palabra = 'Piso'
+    
+    pisos = any(palabra in string for string in pi)
+    if pisos==True:
+        #print("Hay pisos")
+        cantidad_pisos=len(pi)
+        list_pisos.append(cantidad_pisos)
+        list_area.append(round(d['building_area']/d['pisos']*cantidad_pisos))
+    else:
+        list_pisos.append(d['pisos'])
+        list_area.append(d['building_area'])
     f = x[1]
     f = f.split('Nro. ')
     n = f[-1]
@@ -197,6 +216,7 @@ for i,d in df_first.iterrows():
     s_lng = geocode_result[0]['geometry']['viewport']['southwest']['lng']
     lat = geocode_result[0]['geometry']['location']['lat']
     lng = geocode_result[0]['geometry']['location']['lng']
+    
     #print(lat,lng)
     #print(n_lat,n_lng)
     #print(s_lat,s_lng)
@@ -206,6 +226,7 @@ for i,d in df_first.iterrows():
     list_lat.append(lat)
     list_lng.append(lng)
     list_ubid.append(ubid)
+
 #print(lat,lng)
 #NE
 #print(getPointLatLng(w, 0))
@@ -214,13 +235,24 @@ for i,d in df_first.iterrows():
 #NW
 #print(getPointLatLng(0, 0))
 #SE
-#print(getPointLatLng(w, h))
+# #print(getPointLatLng(w, h))
 
+#Algoritmo para calcular altura
+# print(list_pisos)
+# list_altura = list()
+# for x in list_pisos:
+#     piso = isinstance(x, int)
+#     for i in range (len(df_first)):
+#         if piso==True:
+#             list_altura.append(x*2.8)#Se multiplica cantidad de pisos por 
+#         else:
 
 df_first['latitude'] = list_lat
 df_first['longitude']  = list_lng
 df_first['building_ID'] = list_ubid
 df_first['building_address'] = list_address
+df_first['altura'] = list_altura
+df_first['num_institution'] = list_pisos
 #Generamos Excel con el que trabajara better
 df_first.to_excel(data_path+'portfolio.xlsx', sheet_name='datos_procesados',index=False)
 
@@ -253,15 +285,11 @@ def split(arr, size):
     arrs.append(arr)
     return arrs
 
-
-
-
-
-
-
-
 suma_anuales = list()
- 
+
+geojson_kipus.crear_geojson(df_first,list_ubid,list_address,suma_anuales,list_pisos,list_area)
+input()
+
 print('Ingrese año')
 anio = input()
 for x in range(len(df_first)):
@@ -290,7 +318,7 @@ for x in range(len(df_first)):
     list_cluster_b.append(cluster_b)
     
     #Sumamos costos anuales y los agregamos a una lista
-    suma_anuales.append(sum(df_first.iloc[x,12:24]))
+    suma_anuales.append(round(sum(df_first.iloc[x,12:24])))
 
     #Agregamos todos los valores que calculo better para trabajar con ellos
     list_baseload.append(model.baseload)
@@ -371,5 +399,4 @@ df_first['cluster_d'] = list_cluster_d
 df_first.to_excel(report_path+'Datos Finales.xlsx', sheet_name='Datos',index=False)
 
 #Creamos archivo csv el cual se utilizara para subir a CityBes
-csv_kipus.crear_csv(df_first,list_ubid,list_address,suma_anuales)
-#geojson.crear_json(df_first,list_ubid,list_address,suma_anuales)
+csv_kipus.crear_csv(df_first,list_ubid,list_address,suma_anuales,list_pisos,list_area)

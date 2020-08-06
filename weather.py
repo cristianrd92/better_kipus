@@ -66,12 +66,12 @@ class Weather:
             self.v_T_F, self.v_T_C = self.process_downloaded_weather(self.closest_weather_station_ID)
         except:
             try:
-                print("Weather from the closest weather station not available...")
-                print("Trying to download the third second data from the third closest weather station.")
+                print("El tiempo de la estación meteorológica más cercana no está disponible...")
+                print("Intentando descargar los datos de la siguiente estación meteorológica más cercana.")
                 self.v_T_F, self.v_T_C = self.process_downloaded_weather(self.second_closest_weather_station_ID)
             except:
-                print("Weather from the second closest weather station not available...")
-                print("Trying to download the third weather data from the third closest weather station.")
+                print("El tiempo de la estación meteorológica más cercana no está disponible...")
+                print("Intentando descargar los datos de la siguiente estación meteorológica más cercana.")
                 self.v_T_F, self.v_T_C = self.process_downloaded_weather(self.third_closest_weather_station_ID)
 
     def use_downloaded_weather(self):

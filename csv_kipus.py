@@ -11,7 +11,7 @@ citybes = s_path + '/outputs_citybes/'
 
 
 
-def crear_csv(df_first,list_ubid,list_address,suma_anuales):
+def crear_csv(df_first,list_ubid,list_address,suma_anuales,list_pisos,list_area):
     df_csv = pd.DataFrame(columns=('UBID','search_index','building_id','shared_footprint','institution','use_type','city','address','year_built','cluster_probability','disaggregate_proportion_by_institution_floors',
     'disaggregate_proportion_by_institution_area','gross_floor_area_filled','old_gross_floor_area','real_year_built','num_floors','num_institution','institution_total_floor_area','building_total_floor_area',
     'floor_height','building_height','department_name','latitude','longitude','wall_material','wall_insulation','roof_insulation','window_frame','window_type','wwr_norte','wwr_oriente','wwr_poniente','wwr_sur',
@@ -48,8 +48,8 @@ def crear_csv(df_first,list_ubid,list_address,suma_anuales):
     df_csv['old_gross_floor_area'] = df_first['building_area']
     df_csv['real_year_built'] = predefinidos[5]
     df_csv['num_floors'] = df_first['pisos'] #Referencia al edificio completo
-    df_csv['num_institution'] = df_first['pisos'] #Referencia a los pisos ocupados por la insitución
-    df_csv['institution_total_floor_area'] = df_first['building_area'] #Area ocupada por la insitucion en referencia a los pisos
+    df_csv['num_institution'] = list_pisos #Referencia a los pisos ocupados por la insitución
+    df_csv['institution_total_floor_area'] = list_area #Area ocupada por la insitucion en referencia a los pisos
     df_csv['building_total_floor_area'] = df_first['building_area'] #Area total del edificio
     df_csv['floor_height'] = predefinidos[6]
     df_csv['building_height'] = predefinidos[7] #Preguntar que es?
@@ -62,18 +62,18 @@ def crear_csv(df_first,list_ubid,list_address,suma_anuales):
     df_csv['window_frame'] = predefinidos[10]
     df_csv['window_type'] = predefinidos[11]
     df_csv['wwr_norte'] = predefinidos[11]
-    df_csv['Elec_Y17M01'] = df_first['m1']
-    df_csv['Elec_Y17M02'] = df_first['m2']
-    df_csv['Elec_Y17M03'] = df_first['m3']
-    df_csv['Elec_Y17M04'] = df_first['m4']
-    df_csv['Elec_Y17M05'] = df_first['m5']
-    df_csv['Elec_Y17M06'] = df_first['m6']
-    df_csv['Elec_Y17M07'] = df_first['m7']
-    df_csv['Elec_Y17M08'] = df_first['m8']
-    df_csv['Elec_Y17M09'] = df_first['m9']
-    df_csv['Elec_Y17M10'] = df_first['m10']
-    df_csv['Elec_Y17M11'] = df_first['m11']
-    df_csv['Elec_Y17M12'] = df_first['m12']
+    df_csv['Elec_Y17M01'] = round(df_first['m1'])
+    df_csv['Elec_Y17M02'] = round(df_first['m2'])
+    df_csv['Elec_Y17M03'] = round(df_first['m3'])
+    df_csv['Elec_Y17M04'] = round(df_first['m4'])
+    df_csv['Elec_Y17M05'] = round(df_first['m5'])
+    df_csv['Elec_Y17M06'] = round(df_first['m6'])
+    df_csv['Elec_Y17M07'] = round(df_first['m7'])
+    df_csv['Elec_Y17M08'] = round(df_first['m8'])
+    df_csv['Elec_Y17M09'] = round(df_first['m9'])
+    df_csv['Elec_Y17M10'] = round(df_first['m10'])
+    df_csv['Elec_Y17M11'] = round(df_first['m11'])
+    df_csv['Elec_Y17M12'] = round(df_first['m12'])
     df_csv['Elec_Y18M01'] = 0
     df_csv['Elec_Y18M02'] = 0
     df_csv['Elec_Y18M03'] = 0
@@ -88,7 +88,7 @@ def crear_csv(df_first,list_ubid,list_address,suma_anuales):
     df_csv['Elec_Y18M12'] = 0
     df_csv['Elec_intensity_Y17'] = 3 #????Que es????
     df_csv['Elec_intensity_Y18'] = 3 #????Que es????
-    df_csv['Elec_annual_cost'] = suma_anuales
+    df_csv['Elec_annual_cost'] = round(suma_anuales)
     df_csv['Gas_Y17M01'] = 0
     df_csv['Gas_Y17M02'] = 0
     df_csv['Gas_Y17M03'] = 0
@@ -126,4 +126,4 @@ def crear_csv(df_first,list_ubid,list_address,suma_anuales):
     else:
         month= now.month
     fecha = str(day)+str(month)+str(now.year)
-    df_csv.to_csv(citybes+'chile_dataset_'+fecha+'.csv',encoding='utf-8',index=False)
+    df_csv.to_csv(citybes+'chile_dataset_'+fecha+'.csv',encoding='utf-8-sig',index=False)
