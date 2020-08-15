@@ -287,8 +287,6 @@ def split(arr, size):
 
 suma_anuales = list()
 
-geojson_kipus.crear_geojson(df_first,list_ubid,list_address,suma_anuales,list_pisos,list_area)
-input()
 
 print('Ingrese año')
 anio = input()
@@ -400,3 +398,5 @@ df_first.to_excel(report_path+'Datos Finales.xlsx', sheet_name='Datos',index=Fal
 
 #Creamos archivo csv el cual se utilizara para subir a CityBes
 csv_kipus.crear_csv(df_first,list_ubid,list_address,suma_anuales,list_pisos,list_area)
+#Creamos archivo GEOJSON el cual utilizara para subir a CityBES
+geojson_kipus.crear_geojson(df_first,list_ubid,list_address,suma_anuales,list_pisos,list_area)

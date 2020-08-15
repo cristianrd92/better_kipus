@@ -36,9 +36,6 @@ def crear_geojson(df_first,list_ubid,list_address,suma_anuales,list_pisos,list_a
     # {"type": "name", "properties": 
     # {"name": "urn:ogc:def:crs:EPSG::2229"}}, "type": "FeatureCollection", "features":[{}]}
    
-
-    maindic = dict()
-    
     edificios = dict()
     edificios['name'] = 'CityBES_chile_dataset_'+fecha
     edificios['crs'] = {"type": "name", "properties": {"name": "urn:ogc:def:crs:EPSG::2229"}}   

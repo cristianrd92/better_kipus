@@ -52,7 +52,7 @@ def crear_csv(df_first,list_ubid,list_address,suma_anuales,list_pisos,list_area)
     df_csv['institution_total_floor_area'] = list_area #Area ocupada por la insitucion en referencia a los pisos
     df_csv['building_total_floor_area'] = df_first['building_area'] #Area total del edificio
     df_csv['floor_height'] = predefinidos[6]
-    df_csv['building_height'] = predefinidos[7] #Preguntar que es?
+    df_csv['building_height'] = predefinidos[7] #Altura edificio
     df_csv['department_name'] = df_first['building_name']
     df_csv['latitude'] = df_first['latitude']
     df_csv['longitude'] = df_first['longitude']
@@ -126,4 +126,5 @@ def crear_csv(df_first,list_ubid,list_address,suma_anuales,list_pisos,list_area)
     else:
         month= now.month
     fecha = str(day)+str(month)+str(now.year)
-    df_csv.to_csv(citybes+'chile_dataset_'+fecha+'.csv',encoding='utf-8-sig',index=False)
+    df_csv.to_csv(citybes+'chile_dataset_'+fecha+'.csv',index=False)
+    #,encoding='utf-8-sig'
