@@ -88,7 +88,7 @@ def crear_csv(df_first,list_ubid,list_address,suma_anuales,list_pisos,list_area)
     df_csv['Elec_Y18M12'] = 0
     df_csv['Elec_intensity_Y17'] = 3 #????Que es????
     df_csv['Elec_intensity_Y18'] = 3 #????Que es????
-    df_csv['Elec_annual_cost'] = round(suma_anuales)
+    df_csv['Elec_annual_cost'] = suma_anuales
     df_csv['Gas_Y17M01'] = 0
     df_csv['Gas_Y17M02'] = 0
     df_csv['Gas_Y17M03'] = 0
@@ -127,4 +127,5 @@ def crear_csv(df_first,list_ubid,list_address,suma_anuales,list_pisos,list_area)
         month= now.month
     fecha = str(day)+str(month)+str(now.year)
     df_csv.to_csv(citybes+'chile_dataset_'+fecha+'.csv',index=False)
+    print("Se genero CSV CityBES")
     #,encoding='utf-8-sig'
