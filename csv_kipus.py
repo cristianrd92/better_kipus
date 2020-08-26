@@ -40,7 +40,7 @@ def crear_csv(df_first,list_ubid,list_address,suma_anuales,list_pisos,list_area)
     df_csv['use_type'] = predefinidos[0]
     df_csv['city'] = df_first['comuna']
     df_csv['address'] = list_address
-    df_csv['year_built'] = predefinidos[1] #Cambiar por numero de cluster a asignar a futuro
+    df_csv['year_built'] = df_first['cluster_final'] #Cambiar por numero de cluster a asignar a futuro
     df_csv['cluster_probability'] = predefinidos[2]
     df_csv['disaggregate_proportion_by_institution_floors'] = predefinidos[3]
     df_csv['disaggregate_proportion_by_institution_area'] = predefinidos[4]

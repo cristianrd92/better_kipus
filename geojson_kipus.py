@@ -1,6 +1,19 @@
 import json
 from datetime import datetime
 import os
+import numpy as np
+
+class NpEncoder(json.JSONEncoder):
+    def default(self, obj):
+        if isinstance(obj, np.integer):
+            return int(obj)
+        elif isinstance(obj, np.floating):
+            return float(obj)
+        elif isinstance(obj, np.ndarray):
+            return obj.tolist()
+        else:
+            return super(NpEncoder, self).default(obj)
+
 
 s_path = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
 citybes = s_path + '/outputs_citybes/'
@@ -44,7 +57,6 @@ def crear_geojson(df_first,list_ubid,list_address,suma_anuales,list_pisos,list_a
     
     for x in range (len(list_ubid)):
         edificio = dict()
-        cluster = df_first.iloc[x]['cluster_a'],df_first.iloc[x]['cluster_b'],df_first.iloc[x]['cluster_c'],df_first.iloc[x]['cluster_d']
         edificio['search_id'] = 'null'
         edificio['id'] = int(id_ed[x])
         edificio['UBID'] = list_ubid[x]
@@ -55,7 +67,7 @@ def crear_geojson(df_first,list_ubid,list_address,suma_anuales,list_pisos,list_a
         edificio['use_type'] = 'Office'
         edificio['city'] = df_first.iloc[x]['comuna']
         edificio['address'] = list_address[x]
-        edificio['year_built'] = cluster
+        edificio['year_built'] = df_first.iloc[x]['cluster_final']
         edificio['cluster_probability'] = '1.0'
         edificio['disaggregate_proportion_by_institution_floors'] = '1'
         edificio['disaggregate_proportion_by_institution_area'] = '1'
@@ -152,10 +164,10 @@ def crear_geojson(df_first,list_ubid,list_address,suma_anuales,list_pisos,list_a
         edificio['long'] = 'null'
         edificio['layer'] = 'null'
         edificio['path'] = 'null'
-        edificio['cluster'] = cluster
+        edificio['cluster'] = df_first.iloc[x]['cluster_final']
         edificios['features'].append({"type": "Feature", "properties":edificio, "geometry":{"type": "MultiPolygon", "coordinates":[[[[34660739.13288364, -22882465.068160176], [34660702.399118096, -22882406.91083627], [34660729.23041844, -22882389.751680564], [34660764.89599292, -22882447.45474032], [34660739.13288364, -22882465.068160176]]]]}})
     
     #Generamos el archivo GEOJSON
     print("Se genero GeoJson")
     with open(OUTPUT_GEOJSON,'w') as f:
-        json.dump(edificios,f)
+        json.dump(edificios,f,cls=NpEncoder)

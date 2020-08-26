@@ -15,6 +15,7 @@ import geojson_kipus
 import math
 import googlemaps
 import model
+import asignar_cluster as a_cluster
 
 gmaps = googlemaps.Client(key='AIzaSyBUEx8t5HyVP5YMjnUPu0rIyuhVmR6Hzy0')
 
@@ -392,10 +393,11 @@ df_first['cluster_a'] = list_cluster_a
 df_first['cluster_b'] = list_cluster_b
 df_first['cluster_c'] = list_cluster_c
 df_first['cluster_d'] = list_cluster_d
+    
+df_first['cluster_final'] = a_cluster.asignar_cluster(df_first)
 
 #Creamos archivo excel con todos los datos obtenidos de better
 df_first.to_excel(report_path+'Datos Finales.xlsx', sheet_name='Datos',index=False)
-
 #Creamos archivo csv el cual se utilizara para subir a CityBes
 csv_kipus.crear_csv(df_first,list_ubid,list_address,suma_anuales,list_pisos,list_area)
 #Creamos archivo GEOJSON el cual utilizara para subir a CityBES
