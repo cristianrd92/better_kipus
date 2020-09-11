@@ -31,7 +31,7 @@ def crear_csv(df_first,list_ubid,list_address,suma_anuales,list_pisos,list_area)
     for x in range(1,(registros+1)):
         id_ed.append(x)
     #Generamos archivo 
-    predefinidos = ['Office',1,10,1,1,2010,28,200,'Concret','No isolation','aluminium','Single']
+    predefinidos = ['Office',1,10,1,1,2010,2.8,200,'Concret','No isolation','aluminium','Single']
 
     df_csv['UBID'] = list_ubid
     df_csv['search_index'] = search
@@ -52,7 +52,7 @@ def crear_csv(df_first,list_ubid,list_address,suma_anuales,list_pisos,list_area)
     df_csv['institution_total_floor_area'] = list_area #Area ocupada por la insitucion en referencia a los pisos
     df_csv['building_total_floor_area'] = df_first['building_area'] #Area total del edificio
     df_csv['floor_height'] = predefinidos[6]
-    df_csv['building_height'] = predefinidos[7] #Altura edificio
+    df_csv['building_height'] = df_first['altura'] #Altura edificio
     df_csv['department_name'] = df_first['building_name']
     df_csv['latitude'] = df_first['latitude']
     df_csv['longitude'] = df_first['longitude']

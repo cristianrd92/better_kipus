@@ -38,16 +38,18 @@ df_first = df_first.drop_duplicates('building_ID')
 df_first = df_first.reset_index(drop=True)
 
 #Algoritmo para verificar valores nulos, vacios o en 0 en el dataframe para excluir meses en calculo factor estacionalidad
-df_temp = df_first.isnull().sum(axis=1)
+#df_temp = df_first.isnull().sum(axis=1)
+df_temp = df_first
 
-#Convertimos el contador de valores nulos en un array para trabajar con el
-a = np.array(df_temp)
 
-#Eliminamos filas con mas de 6 valores nulos o vacios
-for x in range (len(a)):
-    if a[x]>6:
-        df_first = df_first.drop(x)
-df_first = df_first.reset_index(drop=True)
+# #Convertimos el contador de valores nulos en un array para trabajar con el
+# a = np.array(df_temp)
+
+# #Eliminamos filas con mas de 6 valores nulos o vacios
+# for x in range (len(a)):
+#     if a[x]>6:
+#         df_first = df_first.drop(x)
+# df_first = df_first.reset_index(drop=True)
 
 #Eliminamos filas con mas de 6 valores en 0
 for x in range (len(df_first)):
