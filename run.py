@@ -41,6 +41,14 @@ df_first = df_first.reset_index(drop=True)
 #df_temp = df_first.isnull().sum(axis=1)
 df_temp = df_first
 
+def split(arr, size):
+    arrs = []
+    while len(arr) > size:
+        pice = arr[:size]
+        arrs.append(pice)
+        arr   = arr[size:]
+    arrs.append(arr)
+    return arrs
 
 # #Convertimos el contador de valores nulos en un array para trabajar con el
 # a = np.array(df_temp)
@@ -189,7 +197,9 @@ def getPointLatLng(x, y):
 
 list_pisos = list()
 list_area = list()
+l = list()
 for i,d in df_first.iterrows():
+    
     #Comienza proceso de confeccion de direccion
     x = d['building_address']
     x = x.split(',')
@@ -220,6 +230,20 @@ for i,d in df_first.iterrows():
     lat = geocode_result[0]['geometry']['location']['lat']
     lng = geocode_result[0]['geometry']['location']['lng']
     
+    lat = round(lat,7)
+    lng = round(lng,7)
+    lado = round(math.sqrt(round(d["building_area"]/d["pisos"])))
+    l.append([lat,round(lng+(lado/2/1000000),7)])
+    #l.append(lat)
+    l.append([lat,round(lng-(lado/2/1000000),7)])
+    #l.append(lat)
+    l.append([l[0][1],round(lat+(lado/1000000),7)])
+    #l.append(l[0])
+    l.append([l[1][1],round(lat-(lado/1000000),7)])
+    #l.append(l[2])
+    #print(l[0],l[1])
+    #print(l[2],l[3])
+    #print(l[4],l[5])
     #print(lat,lng)
     #print(n_lat,n_lng)
     #print(s_lat,s_lng)
@@ -249,7 +273,7 @@ for i,d in df_first.iterrows():
 #         if piso==True:
 #             list_altura.append(x*2.8)#Se multiplica cantidad de pisos por 
 #         else:
-
+print(split(l,4))
 df_first['latitude'] = list_lat
 df_first['longitude']  = list_lng
 df_first['building_ID'] = list_ubid
@@ -278,15 +302,6 @@ list_cooling_sensitivity = list()
 list_heating_start_point = list()
 list_heating_sensitivity = list()
 list_cluster_d = list()
-
-def split(arr, size):
-    arrs = []
-    while len(arr) > size:
-        pice = arr[:size]
-        arrs.append(pice)
-        arr   = arr[size:]
-    arrs.append(arr)
-    return arrs
 
 suma_anuales = list()
 
@@ -403,4 +418,4 @@ df_first.to_excel(report_path+'Datos Finales.xlsx', sheet_name='Datos',index=Fal
 #Creamos archivo csv el cual se utilizara para subir a CityBes
 csv_kipus.crear_csv(df_first,list_ubid,list_address,suma_anuales,list_pisos,list_area)
 #Creamos archivo GEOJSON el cual utilizara para subir a CityBES
-geojson_kipus.crear_geojson(df_first,list_ubid,list_address,suma_anuales,list_pisos,list_area)
+geojson_kipus.crear_geojson(df_first,list_ubid,list_address,suma_anuales,list_pisos,list_area,l)
