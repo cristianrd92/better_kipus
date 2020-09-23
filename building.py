@@ -321,6 +321,7 @@ class Building:
     def calculate_savings(self):
         self.total_energy_consumption_old = 0
         if (not hasattr(self, "p_new_e")):
+            cont = 0
             #print("¡No se encontró ningún modelo de ahorro para el consumo de electricidad!")
         else:
             # Calculate electricity savings (all and most recent year)
@@ -342,6 +343,7 @@ class Building:
             self.total_energy_consumption_old += self.old_consumption_last_year_e
 
         if (not hasattr(self, "p_new_f")):
+            cont = 0
             #print("¡No se encontró ningún modelo de ahorro para el consumo de combustibles fósiles!")
         else:
             # Calculate fossil_fuel savings (all and most recent year)
