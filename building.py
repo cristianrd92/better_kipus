@@ -118,7 +118,7 @@ class Building:
         self.pre_process()
         has_fit_e = has_fit_f = False
         # Fit change-point model for electricity consumption
-        print('Ajustes del modelo de electricidad...')
+        #print('Ajustes del modelo de electricidad...')
         if (hasattr(self, "weather_electricity")):
             self.im_electricity = model.InverseModel(self.weather_electricity.v_T_C,
                                                      self.eui_daily_electricity,
@@ -127,7 +127,7 @@ class Building:
             if (has_fit_e):
                 self.im_electricity.plot_IM(self)
         # Fit change-point model for fossil fuel consumption
-        print('Ajustes del modelo de combustible fósil...')
+        #print('Ajustes del modelo de combustible fósil...')
         if (hasattr(self, "weather_fossil_fuel")):
             self.im_fossil_fuel = model.InverseModel(self.weather_fossil_fuel.v_T_C,
                                                      self.eui_daily_fossil_fuel,
@@ -142,7 +142,7 @@ class Building:
         This function add Benchmark instances for the current Building instance
         :return:
         """
-        print("Inciando evaluación comparativa (benchmarking)")
+        #print("Inciando evaluación comparativa (benchmarking)")
         if use_default:
             df_sample_bench_stats_e = constants.Constants.df_sample_benchmark_stats_e
             df_sample_bench_stats_f = constants.Constants.df_sample_benchmark_stats_f
@@ -321,7 +321,7 @@ class Building:
     def calculate_savings(self):
         self.total_energy_consumption_old = 0
         if (not hasattr(self, "p_new_e")):
-            print("¡No se encontró ningún modelo de ahorro para el consumo de electricidad!")
+            #print("¡No se encontró ningún modelo de ahorro para el consumo de electricidad!")
         else:
             # Calculate electricity savings (all and most recent year)
             self.v_old_daily_eui_all_e = model.InverseModel.piecewise_linear(self.weather_electricity.v_T_C, *self.im_electricity.model_p)
@@ -337,12 +337,12 @@ class Building:
             # Calculate cost savings
             if (not hasattr(self.utility_electricity, 'utility_unit_price')):
                 self.utility_electricity.utility_unit_price = constants.Constants.electricity_unit_price
-                print('Advertencia: ¡No se proporcionan datos de costos de electricidad, utilizando el valor predeterminado!')
+                #print('Advertencia: ¡No se proporcionan datos de costos de electricidad, utilizando el valor predeterminado!')
             self.total_cost_savings_e = round(self.utility_electricity.utility_unit_price * self.total_energy_savings_last_year_e, 1)
             self.total_energy_consumption_old += self.old_consumption_last_year_e
 
         if (not hasattr(self, "p_new_f")):
-            print("¡No se encontró ningún modelo de ahorro para el consumo de combustibles fósiles!")
+            #print("¡No se encontró ningún modelo de ahorro para el consumo de combustibles fósiles!")
         else:
             # Calculate fossil_fuel savings (all and most recent year)
             self.v_old_daily_eui_all_f = model.InverseModel.piecewise_linear(self.weather_fossil_fuel.v_T_C, *self.im_fossil_fuel.model_p)
@@ -358,7 +358,7 @@ class Building:
             # Calculate cost savings
             if (not hasattr(self.utility_fossil_fuel, 'utility_unit_price')):
                 self.utility_fossil_fuel.utility_unit_price = constants.Constants.fossil_fuel_unit_price
-                print('Advertencia: ¡No se proporcionan datos de costos de combustible fósil, utilizando el valor predeterminado!')
+                #print('Advertencia: ¡No se proporcionan datos de costos de combustible fósil, utilizando el valor predeterminado!')
             self.total_cost_savings_f = round(self.utility_fossil_fuel.utility_unit_price * self.total_energy_savings_last_year_f, 1)
             self.total_energy_consumption_old += self.old_consumption_last_year_f
 

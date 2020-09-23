@@ -61,7 +61,7 @@ class Weather:
         self.third_closest_weather_station_name = df_weather_station_list.loc[third_closest_index, 'station_name']
 
     def download_weather_NOAA(self):
-        print("Descargando datos meteorológicos...")
+        #print("Descargando datos meteorológicos...")
         try:
             self.v_T_F, self.v_T_C = self.process_downloaded_weather(self.closest_weather_station_ID)
         except:
@@ -136,7 +136,7 @@ class Weather:
             return (raw_rpt.air_temperature.get_fahrenheit())
         
         for year in range(self.start_year, self.end_year + 1):
-            print("--->" + str(year))
+            #print("--->" + str(year))
             download_sub_hourly_weather(weather_station_ID, year)
             save_as_csv(weather_station_ID, year)
             raw_csv = weather_station_ID + '-' + str(year) + '.csv'
@@ -148,7 +148,7 @@ class Weather:
             # Cleaning up
             os.remove(raw_csv)
         # Parse ish text data to readable weather data
-        print("Procesando datos descargados...")
+        #print("Procesando datos descargados...")
         v_rpt = list(map(get_ish_report_helper, df_raw['Old']))
         v_noaa_datetime = np.array(list(map(get_ish_report_datetime_helper, v_rpt)))
         v_noaa_temperature_F = np.array(list(map(get_ish_report_temperature_helper, v_rpt)))
