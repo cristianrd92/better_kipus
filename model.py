@@ -176,7 +176,7 @@ class InverseModel:
         # return (has_fit)
 
         if (self.R_Squared() < threshold):
-            print('No se encontró ajuste')
+            #print('No se encontró ajuste')
             # Cannot accept model immediately. No meaningful correlation found.
             return (has_fit)
         else:

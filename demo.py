@@ -20,6 +20,7 @@ def run_single(
     bldg_id = 1, 
     saving_target = 2, 
     anio = 3,
+    r=4,
     space_type='Office',
     cached_weather=True, 
     write_fim=True, 
@@ -99,13 +100,15 @@ def run_single(
             #if (hasattr(building_test, 'FIM_table_f')):
                 #if write_model: building_test.coeff_out_f.to_csv(report_path + 'bldg_' + str(building_test.bldg_id) + "_Fossil Fuel Coeffs_out.csv")
                 #if write_fim: building_test.FIM_table_f.to_csv(report_path + 'bldg_' + str(building_test.bldg_id) + "_Fossil Fuel FIM_recommendations.csv")
-    
-            # Generate static HTML report
-            report_building = report.Report(building = building_test)
-            report_building.generate_building_report_beta(report_path)
+            if r==1:
+                # Generate static HTML report
+                report_building = report.Report(building = building_test)
+                report_building.generate_building_report_beta(report_path)
+
             return True, building_test
         else:
-            print("No se encontró un modelo de punto de cambio significativo para el edificio actual.")
+            cont = 0
+            #print("No se encontró un modelo de punto de cambio significativo para el edificio actual.")
             #return False, None
 
 

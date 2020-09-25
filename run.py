@@ -36,10 +36,12 @@ estacionalidad_meses = list()
 #Eliminamos las filas duplicadas
 df_first = df_first.drop_duplicates('building_ID')
 df_first = df_first.reset_index(drop=True)
+print("Iniciando....")
 
 #Algoritmo para verificar valores nulos, vacios o en 0 en el dataframe para excluir meses en calculo factor estacionalidad
-##df_temp = df_first.isnull().sum(axis=1)
-df_temp = df_first
+df_temp = df_first.isnull().sum(axis=1)
+print("Eliminamos filas si no existen en filas datos")
+#df_temp = df_first
 
 def split(arr, size):
     arrs = []
@@ -54,27 +56,29 @@ def split(arr, size):
 a = np.array(df_temp)
 
 #Eliminamos filas con mas de 6 valores nulos o vacios
-# for x in range (len(a)):
-#     if int(a[x])>6:
-#         df_first = df_first.drop(x)
-# df_first = df_first.reset_index(drop=True)
+for x in range (len(a)):
+    if int(a[x])>6:
+        df_first = df_first.drop(x)
+df_first = df_first.reset_index(drop=True)
+print("Eliminamos edificios con mas de 6 meses faltantes")
 
 #Eliminamos filas con mas de 6 valores en 0
-# for x in range (len(df_first)):
-#     b = np.array(df_first.iloc[x,12:24])
-#     b = b.tolist()
-#     if b.count(0)>6:
-#         #print("Fila numero "+str(x)+" contiene mas de 6 numeros 0")
-#         df_temp = df_first.drop(x)
-# df_first = df_temp.reset_index(drop=True)
+for x in range (len(df_first)):
+    b = np.array(df_first.iloc[x,12:24])
+    b = b.tolist()
+    if b.count(0)>6:
+        #print("Fila numero "+str(x)+" contiene mas de 6 numeros 0")
+        df_temp = df_first.drop(x)
+df_first = df_temp.reset_index(drop=True)
+print("Eliminamos edificios con mas de 6 meses en 0")
 
 #Eliminamos filas en dataframe temporal, solo para el calculo de factores de estacionalidad
-# for x in range(len(df_first)):
-#     #Eliminamos filas con valores nullos
-#     df_temp=df_temp.dropna()
-#     #Eliminamos filas con valores 0
-#     #df_temp = df_temp[~(df_temp == 0).any(axis=1)]
-#     df_temp = df_temp[(df_temp!=0)&(pd.isnull(df_temp))]
+for x in range(len(df_first)):
+    #Eliminamos filas con valores nullos
+    df_temp=df_temp.dropna()
+    #Eliminamos filas con valores 0
+    df_temp = df_temp[~(df_temp == 0).any(axis=1)]
+    #df_temp = df_temp[(df_temp!=0)&(pd.isnull(df_temp))]
 #Calculamos la estacionalidad de cada mes de por edificio y la agregamos a una matriz
 for x in range (len(df_temp)):
     promedio_meses_ed=df_temp.iloc[x,12:24].mean()
@@ -82,11 +86,13 @@ for x in range (len(df_temp)):
         estacionalidad_meses.append(df_temp.iloc[x,i]/promedio_meses_ed)
     estacionalidad_general.append(estacionalidad_meses)
     estacionalidad_meses = list()
+print("Calculo de estacionalidad edificios por mes")
 
 #Calculamos los factores de estacionalidad de cada uno de los 12 meses
 for x in range(12):
     suma = sum([fila[x] for fila  in estacionalidad_general])
     estacionalidad_meses.append(suma/len(estacionalidad_general))
+print("Calculo de estacionalidad para meses")
 
 valores_q = list()
 list_altura = list()
@@ -156,6 +162,7 @@ for x in range (len(df_first)):
     df_first.iloc[x,12:24]=b
     #Algoritmo para eliminar valores muy alejados de q1 y q3
     valores_q.append(sum(b)/df_first.iloc[x,6])
+print("Completamos meses faltantes")
 
 q1 = np.percentile(valores_q,25)
 q3 = np.percentile(valores_q,75)
@@ -169,6 +176,7 @@ for x in valores_q:
     if x<lower or x>higher:
         df_first = df_first.drop(indice)
     indice+=1
+print("Eliminamos edificios si estan muy alejados de q1 o q3")
 
 #print(q1,q3,iqr,lower,higher,valores_q)
 
@@ -179,78 +187,62 @@ list_address=list()
 
 list_pisos = list()
 list_area = list()
+dir_not_found = list()
 l = list()
+cont = 0
 for i,d in df_first.iterrows():
-    #Agregamos la altura de los edificios en base a promedio de cada piso es 3
-    list_altura.append(d['pisos']*3)
-    
     #Comienza proceso de confeccion de direccion
     x = d['building_address']
     x = x.split(',')
-    pi = x[2:-1]
-    palabra = 'Pisos'
-    
-    pisos = any(palabra in string for string in pi)
-    if pisos==True:
-        #print("Hay pisos")
-        cantidad_pisos=len(pi)
-        list_pisos.append(cantidad_pisos)
-        list_area.append(round(d['building_area']/d['pisos']*cantidad_pisos))
-    else:
-        list_pisos.append(d['pisos'])
-        list_area.append(d['building_area'])
     f = x[1]
     f = f.split('Nro. ')
     n = f[-1]
     x = x[0]+' '+n+','+x[-1]+', Chile'
     #Finaliza confeccion direccion
+    #print(x)
     geocode_result = gmaps.geocode(x)
-    #print(geocode_result)
-    #print('-------------------------')
-    n_lat = geocode_result[0]['geometry']['viewport']['northeast']['lat']
-    n_lng = geocode_result[0]['geometry']['viewport']['northeast']['lng']
-    s_lat = geocode_result[0]['geometry']['viewport']['southwest']['lat']
-    s_lng = geocode_result[0]['geometry']['viewport']['southwest']['lng']
-    lat = geocode_result[0]['geometry']['location']['lat']
-    lng = geocode_result[0]['geometry']['location']['lng']
-    
-    lat = round(lat,7)
-    lng = round(lng,7)
-    lado = round(math.sqrt(round(d["building_area"]/d["pisos"])))
-    l.append([lat,round(lng+(lado/2/1000000),7)])
-    #l.append(lat)
-    l.append([lat,round(lng-(lado/2/1000000),7)])
-    #l.append(lat)
-    l.append([round(lat+(lado/1000000),7),l[0][1]])
-    #l.append(l[0])
-    l.append([round(lat-(lado/1000000),7),l[1][1]])
-    #l.append(l[2])
-    #print(l[0],l[1])
-    #print(l[2],l[3])
-    #print(l[4],l[5])
-    #print(lat,lng)
-    #print(n_lat,n_lng)
-    #print(s_lat,s_lng)
-    #input()
-    ubid = openlocationcode.encode(lat,lng)
-    list_address.append(x)
-    list_lat.append(lat)
-    list_lng.append(lng)
-    list_ubid.append(ubid)
+    if len(geocode_result)!=0:
+        pi = x[2:-1]
+        palabra = 'Piso'
+        
+        #Agregamos la altura de los edificios en base a promedio de cada piso es 3
+        list_altura.append(d['pisos']*3)
+        pisos = any(palabra in string for string in pi)
+        if pisos==True:
+            #print("Hay pisos")
+            cantidad_pisos=len(pi)
+            list_pisos.append(cantidad_pisos)
+            list_area.append(round(d['building_area']/d['pisos']*cantidad_pisos))
+        else:
+            list_pisos.append(d['pisos'])
+            list_area.append(d['building_area'])
+        lat = geocode_result[0]['geometry']['location']['lat']
+        lng = geocode_result[0]['geometry']['location']['lng']
+        lat = round(lat,7)
+        lng = round(lng,7)
+        lado = round(math.sqrt(round(d["building_area"]/d["pisos"])))
+        l.append([lat,round(lng+(lado/2/1000000),7)])
+        l.append([lat,round(lng-(lado/2/1000000),7)])
+        l.append([round(lat+(lado/1000000),7),l[0][1]])
+        l.append([round(lat-(lado/1000000),7),l[1][1]])
+        ubid = openlocationcode.encode(lat,lng)
+        list_address.append(x)
+        list_lat.append(lat)
+        list_lng.append(lng)
+        list_ubid.append(ubid)
+    else:
+        df_first = df_first.drop([i],axis=0)
+        dir_not_found.append(x)
+        cont=cont+1
+        df_first = df_first.reset_index(drop=True)
 
-#print(lat,lng)
-#NE
-#print(getPointLatLng(w, 0))
-#SW
-#print(getPointLatLng(0, h))
-#NW
-#print(getPointLatLng(0, 0))
-#SE
-# #print(getPointLatLng(w, h))
+if cont>0:
+    print("No se encontro latitud y longitud de "+str(cont)+" edificios, estos fueron eliminados")
 
+print("Se agrega altura a cada edificio")
+print("Se agrega UBID y latitud y longitud")
+print("Se confecciona geometria")
 l = split(l,4)
-print(len(list_altura))
-print(len(df_first))
 df_first['latitude'] = list_lat
 df_first['longitude']  = list_lng
 df_first['building_ID'] = list_ubid
@@ -259,6 +251,7 @@ df_first['altura'] = list_altura
 df_first['num_institution'] = list_pisos
 #Generamos Excel con el que trabajara better
 df_first.to_excel(data_path+'portfolio.xlsx', sheet_name='datos_procesados',index=False)
+print("Excel creado con datos limpios")
 
 list_baseload = list()
 list_cluster_a = list()
@@ -285,10 +278,14 @@ suma_anuales = list()
 
 print('Ingrese año')
 anio = input()
+print("Desea generar reportes? (1=si 2=no el tiempo de procesamiento podria aumentar consdierablemente dependiendo la cantidad de edificios")
+r= input()
+print("Se procesaran "+str(len(df_first))+" edificios")
+cantidad = len(df_first)
 for x in range(len(df_first)):
-    print(str(x+1)+' edificio procesado')
+    print(str(x+1)+' edificio procesado, edificios restantes: '+str(cantidad-x))
     #print("---------------------------------------------------------------")
-    run_single(bldg_id=df_first.iloc[x]['building_ID'], saving_target=2, cached_weather=False,anio=anio)
+    run_single(bldg_id=df_first.iloc[x]['building_ID'], saving_target=2, cached_weather=False,anio=anio,r=r)
     #Desde función run single se generan variables globales que son las que necesitamos para asignacion de cluster
     #Se preproceso toda la informacion por lo cual ya podemos asignar cluster
 
