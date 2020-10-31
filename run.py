@@ -96,6 +96,7 @@ print("Calculo de estacionalidad para meses")
 
 valores_q = list()
 list_altura = list()
+print("Completamos meses faltantes...")
 #Algortimo para completar datos de meses faltantes
 for x in range (len(df_first)):
     #Convertimos el dataframe seleccionando solamente los consumos en un vector
@@ -162,7 +163,7 @@ for x in range (len(df_first)):
     df_first.iloc[x,12:24]=b
     #Algoritmo para eliminar valores muy alejados de q1 y q3
     valores_q.append(sum(b)/df_first.iloc[x,6])
-print("Completamos meses faltantes")
+
 
 q1 = np.percentile(valores_q,25)
 q3 = np.percentile(valores_q,75)
@@ -190,6 +191,7 @@ list_area = list()
 dir_not_found = list()
 l = list()
 cont = 0
+print("Se comienza proceso de creación de geometría....")
 for i,d in df_first.iterrows():
     #Comienza proceso de confeccion de direccion
     x = d['building_address']
@@ -221,10 +223,10 @@ for i,d in df_first.iterrows():
         lat = round(lat,7)
         lng = round(lng,7)
         lado = round(math.sqrt(round(d["building_area"]/d["pisos"])))
-        l.append([lat,round(lng+(lado/2/1000000),7)])
-        l.append([lat,round(lng-(lado/2/1000000),7)])
-        l.append([round(lat+(lado/1000000),7),l[0][1]])
-        l.append([round(lat-(lado/1000000),7),l[1][1]])
+        l.append([lat,round(lng+(lado/2/111319),7)])
+        l.append([lat,round(lng-(lado/2/111319),7)])
+        l.append([round(lat+(lado/111319),7),l[0][1]])
+        l.append([round(lat-(lado/111319),7),l[1][1]])
         ubid = openlocationcode.encode(lat,lng)
         list_address.append(x)
         list_lat.append(lat)
@@ -241,7 +243,6 @@ if cont>0:
 
 print("Se agrega altura a cada edificio")
 print("Se agrega UBID y latitud y longitud")
-print("Se confecciona geometria")
 l = split(l,4)
 df_first['latitude'] = list_lat
 df_first['longitude']  = list_lng
@@ -250,8 +251,18 @@ df_first['building_address'] = list_address
 df_first['altura'] = list_altura
 df_first['num_institution'] = list_pisos
 #Generamos Excel con el que trabajara better
+#Eliminamos filas con mas de 6 valores en 0
+for x in range (len(df_first)):
+    b = np.array(df_first.iloc[x,12:24])
+    b = b.tolist()
+    if b.count(0)>6:
+        #print("Fila numero "+str(x)+" contiene mas de 6 numeros 0")
+        df_temp = df_first.drop(x)
+df_first = df_temp.reset_index(drop=True)
+print("Eliminamos edificios con mas de 6 meses en 0 por segunda vez")
 df_first.to_excel(data_path+'portfolio.xlsx', sheet_name='datos_procesados',index=False)
 print("Excel creado con datos limpios")
+
 
 list_baseload = list()
 list_cluster_a = list()
