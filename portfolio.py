@@ -31,6 +31,7 @@ class Portfolio:
 
     def read_raw_data_from_xlsx(self, filename):
         # clean up the raw data and save it as a dataframe
+        # EXCEL LLEGA HASTA AA
         self.df_meta = pd.read_excel(filename, sheet_name="datos_procesados", usecols="A:AE")
         # Change column names in the dataframe
         self.df_meta['building_cooling_fuel_type'] = ''

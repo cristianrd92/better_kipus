@@ -258,8 +258,8 @@ for x in range (len(df_first)):
     if b.count(0)>6:
         #print("Fila numero "+str(x)+" contiene mas de 6 numeros 0")
         df_temp = df_first.drop(x)
-df_first = df_temp.reset_index(drop=True)
-print("Eliminamos edificios con mas de 6 meses en 0 por segunda vez")
+#df_first = df_temp.reset_index(drop=True)
+#print("Eliminamos edificios con mas de 6 meses en 0 por segunda vez")
 df_first.to_excel(data_path+'portfolio.xlsx', sheet_name='datos_procesados',index=False)
 print("Excel creado con datos limpios")
 
