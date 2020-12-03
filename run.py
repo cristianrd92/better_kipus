@@ -171,7 +171,7 @@ iqr = q3-q1
 lower = q1-(1.5*iqr)
 higher = q3+(1.5*iqr)
 
-#Algoritmo para eliminar en base a Q1 y Q3
+#Algoritmo para eliminar en base a lower y higher
 indice =0
 for x in valores_q:
     if x<lower or x>higher:
@@ -214,6 +214,7 @@ for i,d in df_first.iterrows():
             #print("Hay pisos")
             cantidad_pisos=len(pi)
             list_pisos.append(cantidad_pisos)
+            #Se calcula el area ocupada por la insitución
             list_area.append(round(d['building_area']/d['pisos']*cantidad_pisos))
         else:
             list_pisos.append(d['pisos'])
@@ -222,11 +223,13 @@ for i,d in df_first.iterrows():
         lng = geocode_result[0]['geometry']['location']['lng']
         lat = round(lat,7)
         lng = round(lng,7)
+        # Construimos geometría
         lado = round(math.sqrt(round(d["building_area"]/d["pisos"])))
         l.append([lat,round(lng+(lado/2/111319),7)])
         l.append([lat,round(lng-(lado/2/111319),7)])
         l.append([round(lat+(lado/111319),7),l[0][1]])
         l.append([round(lat-(lado/111319),7),l[1][1]])
+        # Obtenemos UBID de edificios
         ubid = openlocationcode.encode(lat,lng)
         list_address.append(x)
         list_lat.append(lat)
@@ -250,7 +253,6 @@ df_first['building_ID'] = list_ubid
 df_first['building_address'] = list_address
 df_first['altura'] = list_altura
 df_first['num_institution'] = list_pisos
-#Generamos Excel con el que trabajara better
 #Eliminamos filas con mas de 6 valores en 0
 for x in range (len(df_first)):
     b = np.array(df_first.iloc[x,12:24])
@@ -260,6 +262,8 @@ for x in range (len(df_first)):
         df_temp = df_first.drop(x)
 #df_first = df_temp.reset_index(drop=True)
 #print("Eliminamos edificios con mas de 6 meses en 0 por segunda vez")
+
+#Generamos Excel con el que trabajara better
 df_first.to_excel(data_path+'portfolio.xlsx', sheet_name='datos_procesados',index=False)
 print("Excel creado con datos limpios")
 

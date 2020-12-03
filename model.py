@@ -236,7 +236,7 @@ class InverseModel:
             self.coeff_validation = {'base': False, 'csl': False, 'ccp': False, 'hsl': False, 'hcp': False}
         elif (self.hcp == self.ccp and self.hsl == 0):
             self.model_type_str = "3P Cooling"
-            self.cp_txt = "(" + str(round(self.ccp, 1)) + ", " + str(round(self.base, 1)) + ")"
+            self.cp_txt = "(" + str(round(self.ccp, 4)) + ", " + str(round(self.base, 4)) + ")"
             self.hcp = self.ccp
             self.hsl = 0
             # self.hsl, self.hcp = np.nan, np.nan
@@ -244,7 +244,7 @@ class InverseModel:
             self.coeff_validation = {'base': True, 'csl': True, 'ccp': True, 'hsl': False, 'hcp': False}
         elif (self.hcp == self.ccp and self.csl == 0):
             self.model_type_str = "3P Heating"
-            self.cp_txt = "(" + str(round(self.hcp, 1)) + ", " + str(round(self.base, 1)) + ")"
+            self.cp_txt = "(" + str(round(self.hcp, 4)) + ", " + str(round(self.base, 4)) + ")"
             self.ccp = self.hcp
             self.csl = 0
             # self.csl, self.ccp = np.nan, np.nan
@@ -252,12 +252,12 @@ class InverseModel:
             self.coeff_validation = {'base': True, 'csl': False, 'ccp': False, 'hsl': True, 'hcp': True}
         elif (self.hcp == self.ccp and self.csl != 0 and self.hsl != 0):
             self.model_type_str = "4P"
-            self.cp_txt = "(" + str(round(self.hcp, 1)) + ", " + str(round(self.base, 1)) + ")"
+            self.cp_txt = "(" + str(round(self.hcp, 4)) + ", " + str(round(self.base, 4)) + ")"
             self.coeff_validation = {'base': True, 'csl': True, 'ccp': True, 'hsl': True, 'hcp': True}
         elif (self.hcp != self.ccp and self.csl != 0 and self.hsl != 0):
             self.model_type_str = "5P"
-            self.cp_txt.append("(" + str(round(self.hcp, 1)) + ", " + str(round(self.base, 1)) + ")")
-            self.cp_txt.append("(" + str(round(self.ccp, 1)) + ", " + str(round(self.base, 1)) + ")")
+            self.cp_txt.append("(" + str(round(self.hcp, 4)) + ", " + str(round(self.base, 4)) + ")")
+            self.cp_txt.append("(" + str(round(self.ccp, 4)) + ", " + str(round(self.base, 4)) + ")")
             self.coeff_validation = {'base': True, 'csl': True, 'ccp': True, 'hsl': True, 'hcp': True}
         # Finally assign the model coefficients
         self.coeffs = {'base': self.base, 'csl': self.csl, 'ccp': self.ccp, 'hsl': abs(self.hsl), 'hcp': self.hcp}
@@ -425,11 +425,11 @@ class InverseModel:
         else:
             model_description_html = ''
 
-        baseload = round(self.base * 1 * constants.Constants.days_in_year, 1)
-        cooling_change_point = round(self.ccp, 1)
-        cooling_sensitivity = round(building.bldg_area * self.csl, 1)
-        heating_start_point = round(self.hcp, 1)
-        heating_sensitivity = round(abs(building.bldg_area * self.hsl), 1)
+        baseload = round(self.base * 1 * constants.Constants.days_in_year, 4)
+        cooling_change_point = round(self.ccp, 4)
+        cooling_sensitivity = round(building.bldg_area * self.csl, 4)
+        heating_start_point = round(self.hcp, 4)
+        heating_sensitivity = round(abs(building.bldg_area * self.hsl), 4)
 
         self.model_description_html = model_description_html
         
